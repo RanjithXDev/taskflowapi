@@ -1,0 +1,42 @@
+<h2>Create Project</h2>
+
+<input id="projectName" placeholder="Project Name">
+<input id="description" placeholder="Description">
+<input id="owner" placeholder="Owner User ID">
+
+<button onclick="createProject()">Create</button>
+
+<h3>Projects</h3>
+<div id="projects"></div>
+
+<script>
+async function fetchProjects() {
+  const res = await fetch('/api/projects');
+  const data = await res.json();
+  projects.innerHTML = '';
+
+  data.forEach(project => {
+    projects.innerHTML += `
+      <div class="card">
+        ${project.name}
+      </div>
+    `;
+  });
+}
+
+async function createProject() {
+  await fetch('/api/projects', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      name: projectName.value,
+      description: description.value,
+      owner: owner.value
+    })
+  });
+
+  fetchProjects();
+}
+
+fetchProjects();
+</script>

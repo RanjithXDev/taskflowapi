@@ -1,0 +1,41 @@
+<h2>Add Comment</h2>
+
+<input id="content" placeholder="Comment">
+<input id="author" placeholder="Author ID">
+<input id="task" placeholder="Task ID">
+
+<button onclick="createComment()">Add</button>
+
+<div id="comments"></div>
+
+<script>
+async function fetchComments() {
+  const res = await fetch('/api/comments');
+  const data = await res.json();
+  comments.innerHTML = '';
+
+  data.forEach(comment => {
+    comments.innerHTML += `
+      <div class="card">
+        ${comment.content}
+      </div>
+    `;
+  });
+}
+
+async function createComment() {
+  await fetch('/api/comments', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      content: content.value,
+      author: author.value,
+      task: task.value
+    })
+  });
+
+  fetchComments();
+}
+
+fetchComments();
+</script>

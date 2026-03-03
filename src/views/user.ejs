@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Management</title>
+  <link rel="stylesheet" href="/css/user.css">
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>User Management</h1>
+    <a href="/" class="back-btn">← Dashboard</a>
+  </header>
+
+  <!-- Create User Card -->
+  <div class="card form-card">
+    <h2>Create New User</h2>
+
+    <div class="form-grid">
+      <input id="name" type="text" placeholder="Full Name">
+      <input id="email" type="email" placeholder="Email Address">
+      <input id="password" type="password" placeholder="Password (min 8 chars)">
+      <select id="role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <button id="createBtn" class="primary-btn">Create User</button>
+    <div id="error" class="error-msg"></div>
+  </div>
+
+  <!-- Users List -->
+  <div class="card">
+    <h2>All Users</h2>
+    <div id="users" class="user-grid"></div>
+  </div>
+
+</div>
+
+
+<script src="/js/user.js"></script>
+</body>
+</html>
