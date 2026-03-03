@@ -1,19 +1,67 @@
-import { Request, Response } from 'express';
-import { Project } from '../models/projects';
+import { Request, Response, NextFunction } from 'express';
+import { ProjectService } from '../services/project.services';
 
-export const createProject = async (req: Request, res: Response) => {
+export const createProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const project = await Project.create(req.body);
+    const project = await ProjectService.create(req.body);
     res.status(201).json(project);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const getProjects = async (_req: Request, res: Response) => {
-  const projects = await Project.find()
-    .populate('owner', 'name email')
-    .populate('members', 'name email');
+export const getProjects = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const projects = await ProjectService.findAll();
+    res.json(projects);
+  } catch (error) {
+    next(error);
+  }
+};
 
-  res.json(projects);
+export const getProjectById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const project = await ProjectService.findById(req.params.id as string);
+    res.json(project);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const project = await ProjectService.update(req.params.id as string, req.body);
+    res.json(project);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await ProjectService.delete(req.params.id as string);
+    res.json({ message: 'Project deleted' });
+  } catch (error) {
+    next(error);
+  }
 };
