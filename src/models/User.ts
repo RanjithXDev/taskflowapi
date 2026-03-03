@@ -19,38 +19,55 @@ const userSchema = new mongoose.Schema<IUser>(
   {
     email: {
       type: String,
-      required: true,
+      required: [true, 'Email is required'],
       unique: true,
       lowercase: true,
-      match: /^\S+@\S+\.\S+$/
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Invalid email format']
     },
 
     password: {
       type: String,
-      required: true,
-      minlength: 8,
-      select: false 
+      required: [true, 'Password is required'],
+      minlength: [8, 'Password must be at least 8 characters'],
+      select: false
     },
 
     name: {
       type: String,
-      required: true,
-      minlength: 2,
-      maxlength: 50
+      required: [true, 'Name is required'],
+      minlength: [2, 'Name must be at least 2 characters'],
+      maxlength: [50, 'Name cannot exceed 50 characters'],
+      trim: true
     },
 
     role: {
       type: String,
-      enum: ['user', 'admin'],
+      enum: {
+        values: ['user', 'admin'],
+        message: 'Role must be either user or admin'
+      },
       default: 'user'
     },
 
-    avatar: String,
-    resetToken: String,
-    resetTokenExp: Date
+    avatar: {
+      type: String
+    },
+
+    resetToken: {
+      type: String
+    },
+
+    resetTokenExp: {
+      type: Date
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
+
+
 userSchema.pre('save', async function () {
   const user = this as IUser;
 
@@ -66,11 +83,12 @@ userSchema.methods.comparePassword = async function (
   return bcrypt.compare(candidate, this.password);
 };
 
+
 userSchema.methods.generateResetToken = function (): string {
   const token = crypto.randomBytes(32).toString('hex');
 
   this.resetToken = token;
-  this.resetTokenExp = new Date(Date.now() + 10 * 60 * 1000);
+  this.resetTokenExp = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
   return token;
 };

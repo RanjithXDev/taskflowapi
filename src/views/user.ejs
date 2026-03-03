@@ -18,16 +18,20 @@
     <h2>Create New User</h2>
 
     <div class="form-grid">
-      <input id="name" type="text" placeholder="Full Name">
-      <input id="email" type="email" placeholder="Email Address">
-      <input id="password" type="password" placeholder="Password (min 8 chars)">
+      <input id="name" type="text" placeholder="Full Name (2–50 chars)" required>
+      <input id="email" type="email" placeholder="Email Address" required>
+      <input id="password" type="password" placeholder="Password (min 8 chars)" required>
+
       <select id="role">
         <option value="user">User</option>
         <option value="admin">Admin</option>
       </select>
+
+      <input id="avatar" type="text" placeholder="Avatar URL (optional)">
     </div>
 
     <button id="createBtn" class="primary-btn">Create User</button>
+
     <div id="error" class="error-msg"></div>
   </div>
 
@@ -38,7 +42,6 @@
   </div>
 
 </div>
-
 
 <script src="/js/user.js"></script>
 </body>

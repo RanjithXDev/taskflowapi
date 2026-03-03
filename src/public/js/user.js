@@ -14,9 +14,16 @@ async function fetchUsers() {
     container.innerHTML = '';
 
     users.forEach(user => {
+
+      const avatarHtml = user.avatar
+        ? `<img src="${user.avatar}" alt="avatar" class="avatar-img">`
+        : `<div class="avatar-letter">${user.name.charAt(0).toUpperCase()}</div>`;
+
       container.innerHTML += `
         <div class="user-card">
-          <div class="avatar">${user.name.charAt(0).toUpperCase()}</div>
+          <div class="avatar">
+            ${avatarHtml}
+          </div>
           <div class="user-info">
             <strong>${user.name}</strong>
             <p>${user.email}</p>
@@ -39,9 +46,10 @@ async function createUser() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const role = document.getElementById('role').value;
+  const avatar = document.getElementById('avatar').value;
 
   if (!name || !email || !password) {
-    errorDiv.innerText = "All fields are required.";
+    errorDiv.innerText = "Name, Email and Password are required.";
     return;
   }
 
@@ -49,7 +57,7 @@ async function createUser() {
     const res = await fetch('/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role })
+      body: JSON.stringify({ name, email, password, role, avatar })
     });
 
     const data = await res.json();
@@ -59,9 +67,11 @@ async function createUser() {
       return;
     }
 
+    // Reset fields
     document.getElementById('name').value = '';
     document.getElementById('email').value = '';
     document.getElementById('password').value = '';
+    document.getElementById('avatar').value = '';
 
     fetchUsers();
 
