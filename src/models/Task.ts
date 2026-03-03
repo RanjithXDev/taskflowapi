@@ -87,9 +87,7 @@ const taskSchema = new mongoose.Schema<ITask>(
   { timestamps: true }
 );
 
-//
-// 🔹 Middleware
-//
+
 taskSchema.pre('save', function () {
   const task = this as ITask;
 
@@ -102,9 +100,7 @@ taskSchema.pre('save', function () {
   }
 });
 
-//
-// 🔹 Static Methods
-//
+
 taskSchema.statics.findByProject = function (projectId, page = 1, limit = 10) {
   const skip = (page - 1) * limit;
   return this.find({ project: projectId }).skip(skip).limit(limit);
