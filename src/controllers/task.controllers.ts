@@ -27,7 +27,7 @@ export const getTasksByProject = async (req: Request, res: Response) => {
   const { page = 1, limit = 10 } = req.query;
 
   const tasks = await Task.findByProject(
-    req.params.projectId,
+    req.params.projectId as string,
     Number(page),
     Number(limit)
   );
@@ -36,6 +36,6 @@ export const getTasksByProject = async (req: Request, res: Response) => {
 };
 
 export const getStatusCounts = async (req: Request, res: Response) => {
-  const counts = await Task.getStatusCounts(req.params.projectId);
+  const counts = await Task.getStatusCounts(req.params.projectId as string );
   res.json(counts);
 };
