@@ -1,3 +1,5 @@
+let currentTaskId = null;
+
 document.addEventListener('DOMContentLoaded', () => {
   loadUsers();
   loadTasks();
@@ -9,6 +11,28 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('createCommentBtn')
     .addEventListener('click', createComment);
+
+  
+  document.getElementById('comments').addEventListener('click', async (e) => {
+    const deleteBtn = e.target.closest('.delete-comment-btn');
+    if (!deleteBtn) return;
+
+    const commentId = deleteBtn.dataset.id;
+
+    if (!confirm('Delete this comment?')) return;
+
+    try {
+      await fetch(`/api/tasks/${currentTaskId}/comments/${commentId}`, {
+        method: 'DELETE'
+      });
+
+      loadComments(currentTaskId);
+      loadParentOptions(currentTaskId);
+
+    } catch (err) {
+      console.error('Error deleting comment:', err);
+    }
+  });
 });
 
 
@@ -27,6 +51,7 @@ async function loadUsers() {
         </option>
       `;
     });
+
   } catch (err) {
     console.error('Error loading users:', err);
   }
@@ -36,7 +61,8 @@ async function loadUsers() {
 async function loadTasks() {
   try {
     const res = await fetch('/api/tasks');
-    const tasks = await res.json();
+    const result = await res.json();
+    const tasks = result.data || result;
 
     const select = document.getElementById('task');
     select.innerHTML = '<option value="">Select Task</option>';
@@ -48,6 +74,7 @@ async function loadTasks() {
         </option>
       `;
     });
+
   } catch (err) {
     console.error('Error loading tasks:', err);
   }
@@ -55,18 +82,18 @@ async function loadTasks() {
 
 
 async function handleTaskChange(e) {
-  const taskId = e.target.value;
+  currentTaskId = e.target.value;
 
-  if (!taskId) return;
+  if (!currentTaskId) return;
 
-  await loadComments(taskId);
-  await loadParentOptions(taskId);
+  await loadComments(currentTaskId);
+  await loadParentOptions(currentTaskId);
 }
 
 
 async function loadComments(taskId) {
   try {
-    const res = await fetch(`/api/comments/task/${taskId}`);
+    const res = await fetch(`/api/tasks/${taskId}/comments`);
     const comments = await res.json();
 
     const container = document.getElementById('comments');
@@ -85,12 +112,18 @@ async function loadComments(taskId) {
               ${new Date(comment.createdAt).toLocaleString()}
             </span>
           </div>
+
           <div class="comment-content">
             ${comment.content}
           </div>
+
+          <button class="delete-comment-btn" data-id="${comment._id}">
+            Delete
+          </button>
         </div>
       `;
     });
+
   } catch (err) {
     console.error('Error loading comments:', err);
   }
@@ -99,7 +132,7 @@ async function loadComments(taskId) {
 
 async function loadParentOptions(taskId) {
   try {
-    const res = await fetch(`/api/comments/task/${taskId}`);
+    const res = await fetch(`/api/tasks/${taskId}/comments`);
     const comments = await res.json();
 
     const select = document.getElementById('parent');
@@ -112,6 +145,7 @@ async function loadParentOptions(taskId) {
         </option>
       `;
     });
+
   } catch (err) {
     console.error('Error loading parent options:', err);
   }
@@ -121,22 +155,21 @@ async function loadParentOptions(taskId) {
 async function createComment() {
   const content = document.getElementById('content').value.trim();
   const author = document.getElementById('author').value;
-  const task = document.getElementById('task').value;
   const parent = document.getElementById('parent').value;
 
-  if (!content || !author || !task) {
+  if (!content || !author || !currentTaskId) {
     alert('Content, Author, and Task are required.');
     return;
   }
 
   try {
-    const res = await fetch('/api/comments', {
+    const res = await fetch(`/api/tasks/${currentTaskId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content,
         author,
-        task,
+        task: currentTaskId,
         parent: parent || null
       })
     });
@@ -151,10 +184,8 @@ async function createComment() {
     document.getElementById('content').value = '';
     document.getElementById('parent').value = '';
 
-    await loadComments(task);
-    await loadParentOptions(task);
-
-    alert('Comment added successfully!');
+    await loadComments(currentTaskId);
+    await loadParentOptions(currentTaskId);
 
   } catch (err) {
     console.error('Error creating comment:', err);
