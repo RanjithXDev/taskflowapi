@@ -1,41 +1,47 @@
-import { Request, Response } from 'express';
-import { Task } from '../models/Task';
+import { Request, Response, NextFunction } from 'express';
+import { TaskService } from '../services/task.services';
 
-export const createTask = async (req: Request, res: Response) => {
+export const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const task = await Task.create(req.body);
+    const task = await TaskService.create(req.body);
     res.status(201).json(task);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const getTasks = async (_req: Request, res: Response) => {
-  const tasks = await Task.find()
-    .populate('assignee', 'name email')
-    .populate('project', 'name');
-
-  res.json(tasks);
+export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await TaskService.findAll(req.query);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getOverdueTasks = async (_req: Request, res: Response) => {
-  const tasks = await Task.findOverdue();
-  res.json(tasks);
+export const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const task = await TaskService.findById(req.params.id as string );
+    res.json(task);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getTasksByProject = async (req: Request, res: Response) => {
-  const { page = 1, limit = 10 } = req.query;
-
-  const tasks = await Task.findByProject(
-    req.params.projectId as string,
-    Number(page),
-    Number(limit)
-  );
-
-  res.json(tasks);
+export const updateTask = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const task = await TaskService.update(req.params.id as string, req.body);
+    res.json(task);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getStatusCounts = async (req: Request, res: Response) => {
-  const counts = await Task.getStatusCounts(req.params.projectId as string );
-  res.json(counts);
+export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const task = await TaskService.delete(req.params.id as string  );
+    res.json({ message: 'Task soft deleted', task });
+  } catch (error) {
+    next(error);
+  }
 };
