@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Comments</title>
+  <link rel="stylesheet" href="/css/comments.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Task Comments</h1>
+  <a href="/">← Dashboard</a>
+
+  <div class="card">
+    <h2>Add Comment</h2>
+
+    <textarea id="content" placeholder="Write comment..."></textarea>
+
+    <select id="author"></select>
+    <select id="task"></select>
+    <select id="parent">
+      <option value="">No Parent (Top Level)</option>
+    </select>
+
+    <button id="createCommentBtn">Add Comment</button>
+  </div>
+
+  <div class="card">
+    <h2>Comments</h2>
+    <div id="comments"></div>
+  </div>
+</div>
+
+<script src="/js/comments.js"></script>
+</body>
+</html>
