@@ -4,7 +4,11 @@
   "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.ts",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -17,11 +21,14 @@
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
+    "ejs": "^4.0.1",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "mongoose": "^9.2.3"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.3",

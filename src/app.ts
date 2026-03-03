@@ -1,23 +1,28 @@
 import express from "express";
 import cors from "cors";
 import { timeStamp } from "node:console";
+import helmet from "helmet";
+import path from "path";
+import viewRoutes from "../src/routes/view.routes";
+import healthRoutes from './routes/health.routes';
+import { notFound } from "./middleware/notfound";
+import { errorHandler } from "./middleware/errorhandler";
 
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
 
-app.get('api/health', (req, res, next)=>{
-    res.status(200).json({
-        status: 'ok',
-        timeStamp: new Date().toISOString(),
-        uptime: process.uptime()
-    });
-});
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-app.use((req, res, next)=>{
-    res.status(404).json({ message : "Page Not Found"});
-});
+app.use('/', viewRoutes);
 
-export default app;
+app.use('/api/health', healthRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
+
+export default app; 
