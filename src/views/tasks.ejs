@@ -1,52 +1,91 @@
-<h2>Create Task</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Management</title>
+  <link rel="stylesheet" href="/css/tasks.css">
+</head>
+<body>
 
-<input id="title" placeholder="Title">
-<input id="description" placeholder="Description">
-<input id="assignee" placeholder="Assignee ID">
-<input id="project" placeholder="Project ID">
+<div class="container">
 
-<select id="priority">
-  <option value="low">Low</option>
-  <option value="medium">Medium</option>
-  <option value="high">High</option>
-  <option value="urgent">Urgent</option>
-</select>
+  <header class="page-header">
+    <h1>Task Management</h1>
+    <a href="/" class="back-btn">← Dashboard</a>
+  </header>
 
-<button onclick="createTask()">Create</button>
+  <!-- CREATE TASK CARD -->
+  <div class="card">
+    <h2>Create Task</h2>
 
-<h3>Tasks</h3>
-<div id="tasks"></div>
+    <div class="form-grid">
 
-<script>
-async function fetchTasks() {
-  const res = await fetch('/api/tasks');
-  const data = await res.json();
-  tasks.innerHTML = '';
-
-  data.forEach(task => {
-    tasks.innerHTML += `
-      <div class="card">
-        ${task.title} - ${task.status}
+      <div class="form-group full">
+        <label>Title</label>
+        <input id="title" type="text" placeholder="Enter task title">
       </div>
-    `;
-  });
-}
 
-async function createTask() {
-  await fetch('/api/tasks', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      title: title.value,
-      description: description.value,
-      assignee: assignee.value,
-      project: project.value,
-      priority: priority.value
-    })
-  });
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea id="description" placeholder="Enter task description"></textarea>
+      </div>
 
-  fetchTasks();
-}
+      <div class="form-group">
+        <label>Status</label>
+        <select id="status">
+          <option value="todo">Todo</option>
+          <option value="in-progress">In Progress</option>
+          <option value="review">Review</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
 
-fetchTasks();
-</script>
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="priority">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Assignee</label>
+        <select id="assignee"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Project</label>
+        <select id="project"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Tags</label>
+        <input id="tags" placeholder="comma separated">
+      </div>
+
+      <div class="form-group">
+        <label>Due Date</label>
+        <input id="dueDate" type="date">
+      </div>
+
+      <div class="form-group full">
+        <button id="createTaskBtn" class="primary-btn">
+          Create Task
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TASK LIST -->
+  <div class="card">
+    <h2>All Tasks</h2>
+    <div id="tasks" class="task-grid"></div>
+  </div>
+
+</div>
+
+<script src="/js/tasks.js"></script>
+</body>
+</html>

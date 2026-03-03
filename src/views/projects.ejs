@@ -1,42 +1,68 @@
-<h2>Create Project</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Project Management</title>
+  <link rel="stylesheet" href="/css/project.css">
+</head>
+<body>
 
-<input id="projectName" placeholder="Project Name">
-<input id="description" placeholder="Description">
-<input id="owner" placeholder="Owner User ID">
+<div class="container">
 
-<button onclick="createProject()">Create</button>
+  <header class="page-header">
+    <h1>Project Management</h1>
+    <a href="/" class="back-btn">← Dashboard</a>
+  </header>
 
-<h3>Projects</h3>
-<div id="projects"></div>
+  <div class="card">
+    <h2>Create Project</h2>
 
-<script>
-async function fetchProjects() {
-  const res = await fetch('/api/projects');
-  const data = await res.json();
-  projects.innerHTML = '';
+    <div class="form-grid">
 
-  data.forEach(project => {
-    projects.innerHTML += `
-      <div class="card">
-        ${project.name}
+      <div class="form-group full">
+        <label>Name</label>
+        <input id="name" placeholder="Project name">
       </div>
-    `;
-  });
-}
 
-async function createProject() {
-  await fetch('/api/projects', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      name: projectName.value,
-      description: description.value,
-      owner: owner.value
-    })
-  });
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea id="description" placeholder="Project description"></textarea>
+      </div>
 
-  fetchProjects();
-}
+      <div class="form-group">
+        <label>Owner</label>
+        <select id="owner"></select>
+      </div>
 
-fetchProjects();
-</script>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="status">
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label>Members</label>
+        <select id="members" multiple></select>
+      </div>
+
+      <div class="form-group full">
+        <button id="createProjectBtn" class="primary-btn">
+          Create Project
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>All Projects</h2>
+    <div id="projects"></div>
+  </div>
+
+</div>
+
+<script src="/js/project.js"></script>
+</body>
+</html>
