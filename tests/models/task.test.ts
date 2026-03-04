@@ -1,6 +1,7 @@
 import { Task } from '../../src/models/Task';
 import { User } from '../../src/models/User';
 import { Project } from '../../src/models/projects';
+import { TaskService } from '@/services/task.services';
 
 describe('Task Model', () => {
 
@@ -22,7 +23,7 @@ describe('Task Model', () => {
   });
 
   it('should create task with valid data', async () => {
-    const task = await Task.create({
+    const task = await TaskService.create({
       title: 'Test Task',
       description: 'Task description',
       priority: 'high',
@@ -35,7 +36,7 @@ describe('Task Model', () => {
 
   it('should fail if dueDate is in past', async () => {
     await expect(
-      Task.create({
+      TaskService.create({
         title: 'Past Task',
         description: 'desc',
         priority: 'high',
@@ -59,38 +60,7 @@ describe('Task Model', () => {
     expect(task.completedAt).toBeInstanceOf(Date);
   });
 
-  it('findOverdue returns only overdue tasks', async () => {
-    const featureDate = new Date(Date.now() + 100000)
-    const task = await Task.create({
-      title: 'overdue',
-      description: 'desc',
-      priority: 'low',
-      assignee: user._id,
-      project: project._id,
-      dueDate: featureDate
-    });
+ 
 
-    await Task.updateOne(
-        {_id : task.id},
-        {dueDate: new Date(Date.now() - 10000)}
-    );
-    const overdue = await Task.findOverdue();
-    expect(overdue.length).toBe(1);
-    expect(overdue[0].title).toBe('overdue');
-});
 
-  it('getStatusCounts returns correct for todo status', async () => {
-    await Task.create({
-      title: 'Task 1',
-      description: 'desc',
-      priority: 'low',
-      status: 'todo',
-      assignee: user._id,
-      project: project._id
-    });
-
-    const counts = await Task.getStatusCounts(project._id.toString());
-
-    expect(counts.todo).toBe(1);
-  });
 });

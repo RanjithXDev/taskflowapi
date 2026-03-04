@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import {
   createComment,
-  getCommentsByTask
+  getCommentsByTask,
+  deleteComment
 } from '../controllers/comment.controller';
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router.post('/', createComment);
-router.get('/task/:taskId', getCommentsByTask);
+router.get('/', getCommentsByTask);
+router.delete('/:id', deleteComment);
 
 export default router;
