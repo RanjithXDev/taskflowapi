@@ -6,11 +6,17 @@ import {
   deleteUser
 } from '../controllers/user.controller';
 
+import { isAuth } from '../middleware/isAuth';
+import { isAdmin } from '../middleware/isAdmin';
+
 const router = Router();
 
-router.post('/', createUser);
-router.get('/', getUsers);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.post('/', isAuth, isAdmin, createUser);
+
+router.get('/', isAuth, getUsers);
+
+router.put('/:id', isAuth, isAdmin, updateUser);
+
+router.delete('/:id', isAuth, isAdmin, deleteUser);
 
 export default router;

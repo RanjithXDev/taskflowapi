@@ -1,12 +1,22 @@
 let editingUserId = null;
 
+const token = localStorage.getItem('token');
+
+
+if (!token) {
+  window.location.href = '/login';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
   fetchUsers();
 
-  document.getElementById('createBtn')
+  document
+    .getElementById('createBtn')
     .addEventListener('click', createOrUpdateUser);
 
-  // event delegation
+  
+
   document.getElementById('users').addEventListener('click', (e) => {
 
     const editBtn = e.target.closest('.edit-btn');
@@ -23,12 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
   });
+
 });
 
 
+
+
 async function fetchUsers() {
+
   try {
-    const res = await fetch('/api/users');
+
+    const res = await fetch('/api/users', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (res.status === 401) {
+      logout();
+      return;
+    }
+
     const users = await res.json();
 
     const container = document.getElementById('users');
@@ -41,6 +66,7 @@ async function fetchUsers() {
         : `<div class="avatar-letter">${user.name.charAt(0)}</div>`;
 
       container.innerHTML += `
+
         <div class="user-card">
 
           <div class="avatar">
@@ -59,13 +85,17 @@ async function fetchUsers() {
           </div>
 
         </div>
+
       `;
+
     });
 
   } catch (err) {
     console.error('Error fetching users:', err);
   }
+
 }
+
 
 
 async function createOrUpdateUser() {
@@ -89,18 +119,27 @@ async function createOrUpdateUser() {
   try {
 
     const res = await fetch(url, {
+
       method,
-      headers: { 'Content-Type': 'application/json' },
+
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+
       body: JSON.stringify(body)
+
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const data = await res.json();
       alert(data.message);
       return;
     }
 
     clearForm();
+
     editingUserId = null;
 
     document.getElementById('createBtn').innerText = "Create User";
@@ -110,44 +149,88 @@ async function createOrUpdateUser() {
   } catch (err) {
     console.error(err);
   }
+
 }
+
 
 
 async function editUser(userId) {
 
-  const res = await fetch('/api/users');
-  const users = await res.json();
+  try {
 
-  const user = users.find(u => u._id === userId);
+    const res = await fetch('/api/users', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-  if (!user) return;
+    const users = await res.json();
 
-  document.getElementById('name').value = user.name;
-  document.getElementById('email').value = user.email;
-  document.getElementById('role').value = user.role;
-  document.getElementById('avatar').value = user.avatar || '';
+    const user = users.find(u => u._id === userId);
 
-  editingUserId = userId;
+    if (!user) return;
 
-  document.getElementById('createBtn').innerText = "Update User";
+    document.getElementById('name').value = user.name;
+    document.getElementById('email').value = user.email;
+    document.getElementById('role').value = user.role;
+    document.getElementById('avatar').value = user.avatar || '';
+
+    editingUserId = userId;
+
+    document.getElementById('createBtn').innerText = "Update User";
+
+  } catch (err) {
+    console.error(err);
+  }
+
 }
+
 
 
 async function deleteUser(userId) {
 
   if (!confirm("Delete this user?")) return;
 
-  await fetch(`/api/users/${userId}`, {
-    method: 'DELETE'
-  });
+  try {
 
-  fetchUsers();
+    await fetch(`/api/users/${userId}`, {
+
+      method: 'DELETE',
+
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+
+    });
+
+    fetchUsers();
+
+  } catch (err) {
+    console.error(err);
+  }
+
 }
 
 
+
+
 function clearForm() {
+
   document.getElementById('name').value = '';
   document.getElementById('email').value = '';
   document.getElementById('password').value = '';
   document.getElementById('avatar').value = '';
+
+}
+
+
+
+
+function logout() {
+
+  localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
+
+  window.location.href = '/login';
+
 }
