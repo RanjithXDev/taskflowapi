@@ -65,3 +65,19 @@ export const deleteProject = async (
     next(error);
   }
 };
+
+export const getProjectTasks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const tasks = await ProjectService.getProjectTasks(req.params.id as string);
+
+    res.status(200).json(tasks);
+
+  } catch (error) {
+    next(error);
+  }
+};

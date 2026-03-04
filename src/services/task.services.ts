@@ -3,7 +3,13 @@ import { Task } from '../models/Task';
 export class TaskService {
 
   static async create(data: any) {
-    return await Task.create(data);
+    if (data.dueDate && new Date(data.dueDate).getTime() < Date.now()) {
+  throw new Error("Due date must be in the future");
+}
+
+  const task = await Task.create(data);
+
+  return task;
   }
 
   static async findAll(query: any) {
@@ -42,7 +48,11 @@ export class TaskService {
       .populate('assignee', 'name email')
       .populate('project', 'name');
 
-    if (!task) throw new Error('Task not found');
+    if (!task) {
+      const err: any = new Error("Task not found");
+      err.statusCode = 404;
+      throw err;
+    }
 
     return task;
   }
@@ -50,7 +60,11 @@ export class TaskService {
   static async update(id: string, data: any) {
     const task = await Task.findOne({ _id: id, deletedAt: null });
 
-    if (!task) throw new Error('Task not found');
+    if (!task) {
+      const err: any = new Error("Task not found");
+      err.statusCode = 404;
+      throw err;
+    }
 
     Object.assign(task, data);
     await task.save();
