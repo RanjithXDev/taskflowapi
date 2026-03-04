@@ -1,19 +1,53 @@
-import { Request, Response } from 'express';
-import { Comment } from '../models/Comment';
+import { Request, Response, NextFunction } from 'express';
+import { CommentService } from '../services/comment.services';
 
-export const createComment = async (req: Request, res: Response) => {
+export const createComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const comment = await Comment.create(req.body);
+
+    const comment = await CommentService.create({
+      ...req.body,
+      task: req.params.taskId
+    });
+
     res.status(201).json(comment);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+
+  } catch (error) {
+    next(error);
   }
 };
 
-export const getCommentsByTask = async (req: Request, res: Response) => {
-  const comments = await Comment.find({ task: req.params.taskId })
-    .populate('author', 'name email')
-    .populate('parent');
+export const getCommentsByTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    
+    const comments = await CommentService.findByTask(req.params.taskId as string);
 
-  res.json(comments);
+    res.status(200).json(comments);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    await CommentService.delete(req.params.id as string);
+
+    res.status(200).json({ message: 'Comment deleted' });
+
+  } catch (error) {
+    next(error);
+  }
 };
