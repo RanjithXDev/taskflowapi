@@ -43,5 +43,5 @@ async function signup(){
 
   localStorage.setItem("token", data.token);
 
-  window.location.href="/dashboard";
+  window.location.href="/login";
 }

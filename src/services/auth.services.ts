@@ -5,7 +5,7 @@ import {
   verifyRefreshToken
 } from "../utils/jwt";
 
-import { AppError} from "@/utils/AppError";
+import { AppError} from "../utils/AppError";
 
 
 export class AuthService {
@@ -68,7 +68,7 @@ export class AuthService {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw { status: 404, message: "User not found" };
+      throw new AppError("user not found", 401);
     }
 
     const token = user.generateResetToken();

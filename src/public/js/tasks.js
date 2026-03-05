@@ -198,7 +198,11 @@ async function handleSubmit() {
       .map(t => t.trim())
       .filter(t => t !== "");
 
-    const dueDate = document.getElementById("dueDate").value;
+    const dueDateValue = document.getElementById("dueDate").value;
+
+const dueDate = dueDateValue
+  ? new Date(dueDateValue).toISOString()
+  : null;
 
     const method = editingTaskId ? "PUT" : "POST";
 
