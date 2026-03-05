@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken } from '../utils/jwt';
+import { Request, Response, NextFunction } from "express";
+import { verifyAccessToken } from "../utils/jwt";
 
 export const isAuth = (
   req: Request,
@@ -7,13 +7,21 @@ export const isAuth = (
   next: NextFunction
 ) => {
 
+  let token: string | undefined;
+
   const header = req.headers.authorization;
 
-  if (!header) {
-    return res.status(401).json({ message: 'Token missing' });
+  if (header && header.startsWith("Bearer ")) {
+    token = header.split(" ")[1];
   }
 
-  const token = header.split(' ')[1];
+  if (!token && req.cookies?.token) {
+    token = req.cookies.token;
+  }
+
+  if (!token) {
+    return res.redirect("/login");
+  }
 
   try {
 
@@ -25,9 +33,7 @@ export const isAuth = (
 
   } catch {
 
-    return res.status(401).json({
-      message: 'Invalid token'
-    });
+    return res.redirect("/login");
 
   }
 

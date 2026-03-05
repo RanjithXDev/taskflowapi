@@ -33,12 +33,27 @@ export const login = async (
 
     const result =
       await AuthService.login(email, password);
-
+      res.cookie("token", result.accessToken, {
+      httpOnly: true,
+      sameSite: "lax"
+    });
     res.json(result);
 
   } catch (error) {
     next(error);
   }
+
+};
+export const logout = (
+  req: Request,
+  res: Response
+) => {
+
+  res.clearCookie("token");
+
+  res.json({
+    message: "Logged out successfully"
+  });
 
 };
 
