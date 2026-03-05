@@ -45,4 +45,12 @@ router.get('/layout-ui',isAuth, (req: Request, res: Response) => {
   res.render('layout');
 });
 
+router.get("/forgot-password", (req, res) => {
+  res.render("forgot-password");
+});
+
+router.get("/reset/:token", (req, res) => {
+  res.render("reset-password");
+});
+
 export default router;
