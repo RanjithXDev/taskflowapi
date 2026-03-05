@@ -1,5 +1,9 @@
 let currentTaskId = null;
+const token = localStorage.getItem("token");
 
+if (!token) {
+  window.location.href = "/login";
+}
 document.addEventListener('DOMContentLoaded', () => {
   loadUsers();
   loadTasks();
@@ -38,7 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadUsers() {
   try {
-    const res = await fetch('/api/users');
+    const res = await fetch("/api/users", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     const users = await res.json();
 
     const select = document.getElementById('author');

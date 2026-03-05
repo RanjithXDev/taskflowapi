@@ -7,15 +7,16 @@ import {
   deleteProject,
   getProjectTasks
 } from '../controllers/project.controller';
-
-import { getTaskById } from '@/controllers/task.controllers';
+import {createProjectValidator, updateProjectValidator} from "../validators/project.validator"
+import validateRequest from  "../middleware/validateRequest";
+import { getTaskById } from '../controllers/task.controllers';
 
 const router = Router();
 
-router.post('/', createProject);
+router.post('/', createProjectValidator, validateRequest, createProject);
 router.get('/', getProjects);
 router.get('/:id', getProjectById);
-router.put('/:id', updateProject);
+router.put('/:id',updateProjectValidator, validateRequest, updateProject);
 router.delete('/:id', deleteProject);
 
 router.get('/:id/tasks', getProjectTasks);
