@@ -4,7 +4,7 @@ import {
   generateRefreshToken,
   verifyRefreshToken
 } from "../utils/jwt";
-
+import bcrypt from "bcryptjs";
 import { AppError} from "../utils/AppError";
 
 
@@ -90,14 +90,11 @@ export class AuthService {
     }).select("+password");
 
     if (!user) {
-      throw {
-        status: 400,
-        message: "Token invalid or expired"
-      };
+      throw new AppError("Token invalid or expired", 400);
     }
-
+    
     user.password = password;
-
+    
     user.resetToken = undefined;
     user.resetTokenExp = undefined;
 

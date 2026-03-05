@@ -7,48 +7,45 @@ export const errorHandler = (
   next: NextFunction
 ) => {
 
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal Server Error";
+  let errors = err.errors || null;
+
   if (err.name === "ValidationError") {
-    const errors = Object.values(err.errors).map((e: any) => e.message);
-
-    return res.status(400).json({
-      status: "fail",
-      message: "Validation error",
-      errors
-    });
+    statusCode = 400;
+    errors = Object.values(err.errors).map((e: any) => ({
+      field: e.path,
+      message: e.message
+    }));
+    message = "Validation error";
   }
+
+ 
   if (err.name === "CastError") {
-    const errors = Object.values(err.errors).map((e: any) => e.message);
-
-    return res.status(404).json({
-      status: "404",
-      message: "Task Not Found"
-    });
+    statusCode = 400;
+    message = "Invalid ID format";
   }
 
-  if (err.name === "CastError") {
-    return res.status(400).json({
-      status: "fail",
-      message: "Invalid ID format"
-    });
+  if (err.code === 11000) {
+    statusCode = 409;
+    const field = Object.keys(err.keyValue)[0];
+    message = `${field} already exists`;
   }
 
-  if (err.statusCode) {
-    return res.status(err.statusCode).json({
-      status: "fail",
-      message: err.message
-    });
+  if (err.name === "TokenExpiredError") {
+    statusCode = 401;
+    message = "Token expired";
   }
 
-  if (err.message === "Invalid Password") {
-    return res.status(err.statusCode).json({
-      status: "fail",
-      message: err.message
-    });
+  if (err.name === "JsonWebTokenError") {
+    statusCode = 401;
+    message = "Invalid token";
   }
-  
-  res.status(500).json({
-    status: "error",
-    message: err.message || "Internal Server Error"
+
+  res.status(statusCode).json({
+    status: "fail",
+    message,
+    errors,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined
   });
-
 };
