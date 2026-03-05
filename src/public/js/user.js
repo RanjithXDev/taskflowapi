@@ -2,13 +2,14 @@ let editingUserId = null;
 
 const token = localStorage.getItem('token');
 
+let currentUser = null;
 
 if (!token) {
   window.location.href = '/login';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener('DOMContentLoaded', async() => {
+  await getCurrentUser();
   fetchUsers();
 
   document
@@ -80,8 +81,9 @@ async function fetchUsers() {
           </div>
 
           <div class="user-actions">
-            <button class="edit-btn" data-id="${user._id}">Edit</button>
-            <button class="delete-btn" data-id="${user._id}">Delete</button>
+            
+           ${currentUser.role === "admin" ? `<button class="edit-btn" data-id="${user._id}">Edit</button>` : '' }
+           ${currentUser.role === "admin" ? `<button class="delete-btn" data-id="${user._id}">Delete</button>` : '' } 
           </div>
 
         </div>
@@ -233,4 +235,13 @@ function logout() {
 
   window.location.href = '/login';
 
+}
+
+async function getCurrentUser(){
+  const res = await fetch('/api/auth/me',{
+    headers :{
+      Authorization : `Bearer ${token}`
+    }
+  });
+ currentUser = await res.json();
 }
