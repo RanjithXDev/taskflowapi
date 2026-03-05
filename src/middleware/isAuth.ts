@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/jwt";
-
 export const isAuth = (
   req: Request,
   res: Response,
@@ -20,7 +19,7 @@ export const isAuth = (
   }
 
   if (!token) {
-    return res.redirect("/login");
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
@@ -33,7 +32,7 @@ export const isAuth = (
 
   } catch {
 
-    return res.redirect("/login");
+    return res.status(401).json({message :"Token Acces Failed"});
 
   }
 

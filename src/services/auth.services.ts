@@ -5,17 +5,22 @@ import {
   verifyRefreshToken
 } from "../utils/jwt";
 
+import { AppError} from "@/utils/AppError";
+
+
 export class AuthService {
 
   static async signup(data: any) {
 
     const user = await User.create(data);
 
-    const token = generateAccessToken(user.id);
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
 
     return {
       user,
-      token
+      accessToken,
+      refreshToken
     };
 
   }
@@ -27,13 +32,13 @@ export class AuthService {
       .select("+password");
 
     if (!user) {
-      throw { status: 401, message: "Invalid email" };
+      throw new AppError("Invalid email", 401);
     }
 
     const valid = await user.comparePassword(password);
 
     if (!valid) {
-      throw { status: 401, message: "Invalid password" };
+     throw new AppError("Invalid Password", 401);
     }
 
     const accessToken = generateAccessToken(user.id);

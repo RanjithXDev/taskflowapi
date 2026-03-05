@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import path from "path";
 import cookieParser from "cookie-parser";
-
+import dotenv from "dotenv";
 
 import viewRoutes from "./routes/view.routes";
 import healthRoutes from "./routes/health.routes";
@@ -19,6 +19,7 @@ import { errorHandler } from "./middleware/errorhandler";
 
 const app = express();
 
+dotenv.config();
 
 app.use(express.json());
 app.use(cors());

@@ -1,21 +1,83 @@
-import jwt from 'jsonwebtoken';
-import { isAuth } from '../../src/middleware/isAuth';
+import { isAuth } from "../../src/middleware/isAuth";
+import * as jwtUtils from "../../src/utils/jwt";
 
-const mockReq = (token ? : string) =>({
-    header: {
-        authorization : token ? `Bearer ${token}` : undefined
-    }
+jest.mock("../../src/utils/jwt");
+
+describe("isAuth middleware", () => {
+
+  let req: any;
+  let res: any;
+  let next: any;
+
+  beforeEach(() => {
+
+    req = {
+      headers: {}
+    };
+
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+      redirect: jest.fn()
+    };
+
+    next = jest.fn();
+
+  });
+
+  it("passes when valid JWT is provided", () => {
+
+    req.headers.authorization = "Bearer validtoken";
+
+    (jwtUtils.verifyAccessToken as jest.Mock)
+      .mockReturnValue({ userId: "123" });
+
+    isAuth(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.userId).toBe("123");
+
+  });
+
+  it("returns 401 for missing token", () => {
+
+    isAuth(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalled();
+
+  });
+
+  it("returns 401 for expired token", () => {
+
+    req.headers.authorization = "Bearer expired";
+
+    (jwtUtils.verifyAccessToken as jest.Mock)
+      .mockImplementation(() => {
+        throw new Error("TokenExpiredError");
+      });
+
+    isAuth(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalled();
+
+  });
+
+  it("returns 401 for invalid token", () => {
+
+    req.headers.authorization = "Bearer invalid";
+
+    (jwtUtils.verifyAccessToken as jest.Mock)
+      .mockImplementation(() => {
+        throw new Error("Invalid token");
+      });
+
+    isAuth(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalled();
+
+  });
+
 });
-
-const mockResponces =() =>{
-    const res : any = {};
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn();
-    return res;
-};
-
-describe("Is Auth testing", ()=>{
-    it("It will pass with valid JWT", ()=>{
-        const token = jwt.sign({ userId: "123"}, "access-secret")
-    })
-}
