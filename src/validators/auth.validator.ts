@@ -44,11 +44,15 @@ export const forgotPasswordValidator = [
 
 export const resetPasswordValidator = [
 
-  body("token")
-    .notEmpty()
-    .withMessage("Reset token required"),
+  
 
   body("password")
+  .optional()
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+
+   body("newPassword")
+    .optional()
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters")
 

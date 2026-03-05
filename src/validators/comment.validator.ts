@@ -18,14 +18,7 @@ export const createCommentValidator = [
     .withMessage("Comment must be between 1 and 500 characters")
     .customSanitizer(sanitizeInput),
 
-  body("task")
-    .custom(IsValidObjectId)
-    .withMessage("Invalid task ID"),
-
-  body("author")
-    .optional()
-    .custom(IsValidObjectId)
-    .withMessage("Invalid author ID")
+  
 ];
 
 export const updateCommentValidator = [
