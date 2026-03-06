@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-
+import multer from "multer";
 export const errorHandler = (
   err: any,
   req: Request,
@@ -41,7 +41,11 @@ export const errorHandler = (
     statusCode = 401;
     message = "Invalid token";
   }
-
+  if (err instanceof multer.MulterError) {
+  return res.status(400).json({
+    message: err.message
+  });
+  }
   res.status(statusCode).json({
     status: "fail",
     message,

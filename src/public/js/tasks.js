@@ -37,14 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
 async function loadUsers() {
 
   try {
 
     const res = await fetch("/api/users", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     const users = await res.json();
@@ -70,14 +69,13 @@ async function loadUsers() {
 }
 
 
+
 async function loadProjects() {
 
   try {
 
     const res = await fetch("/api/projects", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     const projects = await res.json();
@@ -103,6 +101,7 @@ async function loadProjects() {
 }
 
 
+
 async function fetchTasks(page = 1) {
 
   try {
@@ -110,9 +109,7 @@ async function fetchTasks(page = 1) {
     currentPage = page;
 
     const res = await fetch(`/api/tasks?page=${page}&limit=10`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     const result = await res.json();
@@ -125,6 +122,17 @@ async function fetchTasks(page = 1) {
 
     tasks.forEach(task => {
 
+      const attachmentsHtml = (task.attachments || [])
+        .map(att => `
+          <div class="attachment">
+            📎 
+            <a href="/api/tasks/${task._id}/attachments/${att._id}" target="_blank">
+              ${att.filename}
+            </a>
+          </div>
+        `)
+        .join("");
+
       container.innerHTML += `
 
         <div class="task-card">
@@ -133,21 +141,20 @@ async function fetchTasks(page = 1) {
 
           <p>${task.description || ""}</p>
 
-          <p>
-            <strong>Status:</strong> ${task.status}
-          </p>
+          <p><strong>Status:</strong> ${task.status}</p>
 
-          <p>
-            <strong>Priority:</strong> ${task.priority}
-          </p>
+          <p><strong>Priority:</strong> ${task.priority}</p>
 
-          <p>
-            <strong>Assignee:</strong> ${task.assignee?.name || ""}
-          </p>
+          <p><strong>Assignee:</strong> ${task.assignee?.name || ""}</p>
 
-          <p>
-            <strong>Project:</strong> ${task.project?.name || ""}
-          </p>
+          <p><strong>Project:</strong> ${task.project?.name || ""}</p>
+
+          ${attachmentsHtml ? `
+            <div class="attachments">
+              <strong>Attachments:</strong>
+              ${attachmentsHtml}
+            </div>
+          ` : ""}
 
           <div style="margin-top:10px">
 
@@ -180,6 +187,7 @@ async function fetchTasks(page = 1) {
 }
 
 
+
 async function handleSubmit() {
 
   try {
@@ -200,9 +208,9 @@ async function handleSubmit() {
 
     const dueDateValue = document.getElementById("dueDate").value;
 
-const dueDate = dueDateValue
-  ? new Date(dueDateValue).toISOString()
-  : null;
+    const dueDate = dueDateValue
+      ? new Date(dueDateValue).toISOString()
+      : null;
 
     const method = editingTaskId ? "PUT" : "POST";
 
@@ -235,10 +243,33 @@ const dueDate = dueDateValue
     if (!res.ok) {
 
       const error = await res.json();
-
       alert(error.message || "Operation failed");
-
       return;
+
+    }
+
+    const createdTask = await res.json();
+
+    // upload attachment
+    const fileInput = document.getElementById("attachment");
+    const file = fileInput.files[0];
+
+    if (file && !editingTaskId) {
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      await fetch(`/api/tasks/${createdTask._id}/attachments`, {
+
+        method: "POST",
+
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+
+        body: formData
+
+      });
 
     }
 
@@ -260,14 +291,13 @@ const dueDate = dueDateValue
 }
 
 
+
 async function editTask(taskId) {
 
   try {
 
     const res = await fetch(`/api/tasks/${taskId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     const task = await res.json();
@@ -299,6 +329,7 @@ async function editTask(taskId) {
 }
 
 
+
 async function deleteTask(taskId) {
 
   if (!confirm("Are you sure you want to delete this task?")) return;
@@ -316,11 +347,8 @@ async function deleteTask(taskId) {
     });
 
     if (!res.ok) {
-
       alert("Failed to delete task");
-
       return;
-
     }
 
     fetchTasks(currentPage);
@@ -334,6 +362,7 @@ async function deleteTask(taskId) {
 }
 
 
+
 function renderPagination(pagination) {
 
   if (!pagination) return;
@@ -343,7 +372,6 @@ function renderPagination(pagination) {
   if (!paginationDiv) {
 
     paginationDiv = document.createElement("div");
-
     paginationDiv.id = "pagination";
 
     document.body.appendChild(paginationDiv);
@@ -357,7 +385,6 @@ function renderPagination(pagination) {
     const btn = document.createElement("button");
 
     btn.innerText = i;
-
     btn.disabled = i === pagination.page;
 
     btn.addEventListener("click", () => fetchTasks(i));
@@ -369,11 +396,13 @@ function renderPagination(pagination) {
 }
 
 
+
 function clearForm() {
 
   document.getElementById("title").value = "";
   document.getElementById("description").value = "";
   document.getElementById("tags").value = "";
   document.getElementById("dueDate").value = "";
+  document.getElementById("attachment").value = "";
 
 }
