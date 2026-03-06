@@ -104,4 +104,22 @@ export class AuthService {
 
   }
 
+
+  static async uploadAvatar(userId: string, file: any) {
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    const err: any = new Error("User not found");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  user.avatar = file.filename;
+
+  await user.save();
+
+  return user.avatar;
+}
+
 }

@@ -5,10 +5,11 @@ import { signupValidator, loginValidator, forgotPasswordValidator, resetPassword
 import validateRequest from "../middleware/validateRequest";
 import { isAuth } from "../middleware/isAuth";
 import { authLimiter } from "../config/rateLimiter";
-
+import { avatarUpload } from "../config/avatarUpload";
+import { uploadAvatar } from "../controllers/auth.controller";
 const router = Router();
 
-router.post("/signup", authLimiter, signupValidator, validateRequest, signup);
+router.post("/signup",avatarUpload.single("avatar"), authLimiter, signupValidator, validateRequest, signup);
 
 router.post("/login", authLimiter, loginValidator, validateRequest, login);
 router.post("/logout", logout);
@@ -16,7 +17,7 @@ router.post("/logout", logout);
 router.post("/refresh", refresh);
 
 router.post("/forgot-password", authLimiter, forgotPasswordValidator, validateRequest, forgotPassword);
-
+router.put("/me/avatar", isAuth,  avatarUpload.single("avatar"), uploadAvatar);
 router.post("/reset-password/:token", resetPasswordValidator, validateRequest, resetPassword);
 
 router.get("/me", isAuth, me);
