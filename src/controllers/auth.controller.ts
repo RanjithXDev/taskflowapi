@@ -3,15 +3,20 @@ import { AuthService } from "../services/auth.services";
 import { User } from "../models/User";
 
 export const signup = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction
 ) => {
 
   try {
 
-    const result =
-      await AuthService.signup(req.body);
+    const data = req.body;
+
+    if (req.file) {
+      data.avatar = req.file.filename;
+    }
+
+    const result = await AuthService.signup(data);
 
     res.status(201).json(result);
 
@@ -127,5 +132,36 @@ export const me = async (
     await User.findById(req.userId);
 
   res.json(user);
+
+};
+
+export const uploadAvatar = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No file uploaded"
+      });
+    }
+
+    const avatar =
+      await AuthService.uploadAvatar(
+        req.userId,
+        req.file
+      );
+
+    res.json({
+      message: "Avatar uploaded successfully",
+      avatar
+    });
+
+  } catch (error) {
+    next(error);
+  }
 
 };

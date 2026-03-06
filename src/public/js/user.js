@@ -1,42 +1,35 @@
 let editingUserId = null;
 
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
 let currentUser = null;
 
 if (!token) {
-  window.location.href = '/login';
+  window.location.href = "/login";
 }
 
-document.addEventListener('DOMContentLoaded', async() => {
+document.addEventListener("DOMContentLoaded", async () => {
+
   await getCurrentUser();
   fetchUsers();
 
   document
-    .getElementById('createBtn')
-    .addEventListener('click', createOrUpdateUser);
+    .getElementById("createBtn")
+    .addEventListener("click", createOrUpdateUser);
 
-  
+  document
+    .getElementById("users")
+    .addEventListener("click", (e) => {
 
-  document.getElementById('users').addEventListener('click', (e) => {
+      const editBtn = e.target.closest(".edit-btn");
+      const deleteBtn = e.target.closest(".delete-btn");
 
-    const editBtn = e.target.closest('.edit-btn');
-    const deleteBtn = e.target.closest('.delete-btn');
+      if (editBtn) editUser(editBtn.dataset.id);
+      if (deleteBtn) deleteUser(deleteBtn.dataset.id);
 
-    if (editBtn) {
-      const id = editBtn.dataset.id;
-      editUser(id);
-    }
-
-    if (deleteBtn) {
-      const id = deleteBtn.dataset.id;
-      deleteUser(id);
-    }
-
-  });
+    });
 
 });
-
 
 
 
@@ -44,7 +37,7 @@ async function fetchUsers() {
 
   try {
 
-    const res = await fetch('/api/users', {
+    const res = await fetch("/api/users", {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -57,17 +50,16 @@ async function fetchUsers() {
 
     const users = await res.json();
 
-    const container = document.getElementById('users');
-    container.innerHTML = '';
+    const container = document.getElementById("users");
+    container.innerHTML = "";
 
     users.forEach(user => {
 
       const avatarHtml = user.avatar
-        ? `<img src="${user.avatar}" class="avatar-img">`
-        : `<div class="avatar-letter">${user.name.charAt(0)}</div>`;
+        ? `<img src="/api/users/avatar/${user.avatar.split("/").pop()}" class="avatar-img">`
+        : `<div class="avatar-letter">${user?.name?.charAt(0) || "U"}</div>`;
 
       container.innerHTML += `
-
         <div class="user-card">
 
           <div class="avatar">
@@ -75,25 +67,34 @@ async function fetchUsers() {
           </div>
 
           <div class="user-info">
-            <strong>${user.name}</strong>
-            <p>${user.email}</p>
+            <strong>${user?.name || "Unknown"}</strong>
+            <p>${user?.email || ""}</p>
             <span class="role ${user.role}">${user.role}</span>
           </div>
 
           <div class="user-actions">
-            
-           ${currentUser.role === "admin" ? `<button class="edit-btn" data-id="${user._id}">Edit</button>` : '' }
-           ${currentUser.role === "admin" ? `<button class="delete-btn" data-id="${user._id}">Delete</button>` : '' } 
+
+            ${
+              currentUser && currentUser.role === "admin"
+              ? `<button class="edit-btn" data-id="${user._id}">Edit</button>`
+              : ""
+            }
+
+            ${
+              currentUser && currentUser.role === "admin"
+              ? `<button class="delete-btn" data-id="${user._id}">Delete</button>`
+              : ""
+            }
+
           </div>
 
         </div>
-
       `;
 
     });
 
   } catch (err) {
-    console.error('Error fetching users:', err);
+    console.error("Error fetching users:", err);
   }
 
 }
@@ -102,54 +103,59 @@ async function fetchUsers() {
 
 async function createOrUpdateUser() {
 
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const role = document.getElementById('role').value;
-  const avatar = document.getElementById('avatar').value;
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const role = document.getElementById("role").value;
 
-  const method = editingUserId ? 'PUT' : 'POST';
+  const avatarFile = document.getElementById("avatarFile").files[0];
+
+  const method = editingUserId ? "PUT" : "POST";
 
   const url = editingUserId
     ? `/api/users/${editingUserId}`
     : `/api/users`;
 
-  const body = editingUserId
-    ? { name, role }
-    : { name, email, password, role, avatar };
+  const formData = new FormData();
+
+  formData.append("name", name);
+  formData.append("role", role);
+
+  if (!editingUserId) {
+    formData.append("email", email);
+    formData.append("password", password);
+  }
+
+  if (avatarFile) {
+    formData.append("avatar", avatarFile);
+  }
 
   try {
 
     const res = await fetch(url, {
-
       method,
-
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-
-      body: JSON.stringify(body)
-
+      body: formData
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message);
+      alert(data.message || "Operation failed");
       return;
     }
 
     clearForm();
-
     editingUserId = null;
 
-    document.getElementById('createBtn').innerText = "Create User";
+    document.getElementById("createBtn").innerText = "Create User";
 
     fetchUsers();
 
   } catch (err) {
-    console.error(err);
+    console.error("Error saving user:", err);
   }
 
 }
@@ -160,7 +166,7 @@ async function editUser(userId) {
 
   try {
 
-    const res = await fetch('/api/users', {
+    const res = await fetch("/api/users", {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -172,17 +178,16 @@ async function editUser(userId) {
 
     if (!user) return;
 
-    document.getElementById('name').value = user.name;
-    document.getElementById('email').value = user.email;
-    document.getElementById('role').value = user.role;
-    document.getElementById('avatar').value = user.avatar || '';
+    document.getElementById("name").value = user.name || "";
+    document.getElementById("email").value = user.email || "";
+    document.getElementById("role").value = user.role || "user";
 
     editingUserId = userId;
 
-    document.getElementById('createBtn').innerText = "Update User";
+    document.getElementById("createBtn").innerText = "Update User";
 
   } catch (err) {
-    console.error(err);
+    console.error("Error loading user:", err);
   }
 
 }
@@ -196,52 +201,60 @@ async function deleteUser(userId) {
   try {
 
     await fetch(`/api/users/${userId}`, {
-
-      method: 'DELETE',
-
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`
       }
-
     });
 
     fetchUsers();
 
   } catch (err) {
-    console.error(err);
+    console.error("Error deleting user:", err);
   }
 
 }
 
 
 
-
 function clearForm() {
 
-  document.getElementById('name').value = '';
-  document.getElementById('email').value = '';
-  document.getElementById('password').value = '';
-  document.getElementById('avatar').value = '';
+  document.getElementById("name").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("password").value = "";
+
+  const avatarInput = document.getElementById("avatarFile");
+  if (avatarInput) avatarInput.value = "";
 
 }
-
 
 
 
 function logout() {
 
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
 
-  window.location.href = '/login';
+  window.location.href = "/login";
 
 }
 
+
+
 async function getCurrentUser(){
-  const res = await fetch('/api/auth/me',{
-    headers :{
-      Authorization : `Bearer ${token}`
-    }
-  });
- currentUser = await res.json();
+
+  try {
+
+    const res = await fetch("/api/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    currentUser = await res.json();
+
+  } catch (err) {
+    console.error("Error getting current user:", err);
+  }
+
 }

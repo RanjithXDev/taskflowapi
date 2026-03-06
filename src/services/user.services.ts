@@ -11,18 +11,26 @@ export class UserService {
   }
 
   static async update(id: string, data: any) {
-    const user = await User.findById(id);
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+  const user = await User.findById(id);
 
-    user.name = data.name || user.name;
-    user.role = data.role || user.role;
-
-    await user.save();
-    return user;
+  if (!user) {
+    throw new Error("User not found");
   }
+
+  if (data.name !== undefined) user.name = data.name;
+  if (data.email !== undefined) user.email = data.email;
+  if (data.role !== undefined) user.role = data.role;
+
+  
+  if (data.avatar !== undefined) {
+    user.avatar = data.avatar;
+  }
+
+  await user.save();
+
+  return user;
+}
 
   static async delete(id: string) {
     const user = await User.findById(id);
