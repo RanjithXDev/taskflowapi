@@ -83,4 +83,48 @@ export class TaskService {
 
     return task;
   }
+  static async addAttachment(taskId: string, file: any) {
+
+  const task = await Task.findOne({ _id: taskId, deletedAt: null });
+
+  if (!task) {
+    const err: any = new Error("Task not found");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const attachment = {
+    filename: file.filename,
+    path: file.path,
+    size: file.size
+  };
+
+  task.attachments.push(attachment as any);
+
+  await task.save();
+  const savedAttachment = task.attachments[task.attachments.length - 1];
+  return savedAttachment;
+}
+static async getAttachment(taskId: string, attachmentId: string) {
+
+  const task = await Task.findOne({ _id: taskId, deletedAt: null });
+
+  if (!task) {
+    const err: any = new Error("Task not found");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const attachment = task.attachments.find(
+    (a: any) => a._id.toString() === attachmentId
+  );
+
+  if (!attachment) {
+    const err: any = new Error("Attachment not found");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  return attachment;
+}
 }

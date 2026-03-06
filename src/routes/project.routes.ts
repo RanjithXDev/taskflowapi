@@ -5,7 +5,9 @@ import {
   getProjectById,
   updateProject,
   deleteProject,
-  getProjectTasks
+  getProjectTasks,
+  generateProjectReport,
+  exportTasksCSV
 } from '../controllers/project.controller';
 import {createProjectValidator, updateProjectValidator} from "../validators/project.validator"
 import validateRequest from  "../middleware/validateRequest";
@@ -17,6 +19,8 @@ router.post('/', createProjectValidator, validateRequest, createProject);
 router.get('/', getProjects);
 router.get('/:id', getProjectById);
 router.put('/:id',updateProjectValidator, validateRequest, updateProject);
+router.get("/:id/report", generateProjectReport);
+router.get("/:id/export", exportTasksCSV);
 router.delete('/:id', deleteProject);
 
 router.get('/:id/tasks', getProjectTasks);

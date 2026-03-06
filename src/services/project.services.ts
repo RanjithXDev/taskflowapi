@@ -60,7 +60,7 @@ export class ProjectService {
     return project;
   }
 
-  // REQUIRED ENDPOINT
+ 
   static async getProjectTasks(projectId: string) {
 
     const project = await Project.findById(projectId);

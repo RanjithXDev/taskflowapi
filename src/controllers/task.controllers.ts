@@ -45,3 +45,55 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const uploadTaskAttachment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No file uploaded"
+      });
+    }
+
+    const attachment =
+      await TaskService.addAttachment(
+        req.params.id as string,
+        req.file
+      );
+
+    res.status(201).json({
+      message: "Attachment uploaded",
+      attachment
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const downloadTaskAttachment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const attachment =
+      await TaskService.getAttachment(
+        req.params.id as string,
+        req.params.attachmentId as string
+      );
+
+    res.download(
+      attachment.path,
+      attachment.filename
+    );
+
+  } catch (error) {
+    next(error);
+  }
+};

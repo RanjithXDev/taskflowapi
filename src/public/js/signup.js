@@ -16,32 +16,43 @@ async function signup(){
   const role =
     document.getElementById("role").value;
 
-  const res = await fetch("/api/auth/signup",{
+  const avatarInput =
+    document.getElementById("avatarFile");
 
-    method:"POST",
+  const avatarFile =
+    avatarInput && avatarInput.files.length > 0
+      ? avatarInput.files[0]
+      : null;
 
-    headers:{
-      "Content-Type":"application/json"
-    },
+  const formData = new FormData();
 
-    body:JSON.stringify({
-      name,
-      email,
-      password,
-      role
-    })
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("role", role);
+
+  if (avatarFile) {
+    formData.append("avatar", avatarFile);
+  }
+
+  const res = await fetch("/api/auth/signup", {
+
+    method: "POST",
+
+    body: formData
 
   });
 
   const data = await res.json();
 
-  if(!res.ok){
-    document.getElementById("error")
+  if (!res.ok) {
+    document
+      .getElementById("error")
       .innerText = data.message;
     return;
   }
 
   localStorage.setItem("token", data.token);
 
-  window.location.href="/login";
+  window.location.href = "/login";
 }

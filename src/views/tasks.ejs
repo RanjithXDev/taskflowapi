@@ -4,6 +4,7 @@
   <title>Task Management</title>
   <link rel="stylesheet" href="/css/tasks.css">
 </head>
+
 <body>
 
 <div class="container">
@@ -13,8 +14,10 @@
     <a href="/dashboard" class="back-btn">← Dashboard</a>
   </header>
 
-  <!-- CREATE TASK CARD -->
+
+  <!-- CREATE TASK -->
   <div class="card">
+
     <h2>Create Task</h2>
 
     <div class="form-grid">
@@ -70,22 +73,80 @@
       </div>
 
       <div class="form-group full">
+        <label>Attachment (Max: 5MB)</label>
+        <input type="file" id="attachment">
+      </div>
+
+      <div class="form-group full">
         <button id="createTaskBtn" class="primary-btn">
           Create Task
         </button>
       </div>
 
     </div>
+
   </div>
+
 
   <!-- TASK LIST -->
   <div class="card">
+
     <h2>All Tasks</h2>
-    <div id="tasks" class="task-grid"></div>
+
+    <div id="tasks" class="task-grid">
+
+      <!-- tasks.js will dynamically render tasks here -->
+
+      <!-- Example structure -->
+
+      <!--
+      <div class="task-card">
+
+        <h3>Task Title</h3>
+
+        <p>Description</p>
+
+        <p><strong>Status:</strong> todo</p>
+        <p><strong>Priority:</strong> high</p>
+        <p><strong>Assignee:</strong> Ranjith</p>
+        <p><strong>Project:</strong> TaskFlow</p>
+
+        <div class="attachments">
+
+          <strong>Attachments:</strong>
+
+          <div class="attachment-item">
+            📎 report.pdf
+            <a href="/api/tasks/TASK_ID/attachments/ATTACHMENT_ID" target="_blank">
+              Download
+            </a>
+          </div>
+
+        </div>
+
+        <div class="task-actions">
+
+          <button class="edit-btn" data-id="TASK_ID">
+            Edit
+          </button>
+
+          <button class="delete-btn" data-id="TASK_ID">
+            Delete
+          </button>
+
+        </div>
+
+      </div>
+      -->
+
+    </div>
+
   </div>
 
 </div>
 
+
 <script src="/js/tasks.js"></script>
+
 </body>
 </html>

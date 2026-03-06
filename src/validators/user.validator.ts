@@ -29,7 +29,7 @@ export const createUserValidator = [
 
   body("role")
     .optional()
-    .isIn(["USER", "ADMIN"])
+    .isIn(["user", "admin"])
     .withMessage("Role must be USER or ADMIN")
 
 ];
@@ -52,7 +52,7 @@ export const updateUserValidator = [
 
   body("role")
     .optional()
-    .isIn(["USER", "ADMIN"])
+    .isIn(["user", "admin"])
     .withMessage("Role must be USER or ADMIN")
 
 ];

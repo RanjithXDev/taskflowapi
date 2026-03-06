@@ -38,7 +38,15 @@ const taskSchema = new mongoose.Schema<ITask>(
     project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
     tags: [String],
     dueDate: Date,
-    attachments: [{ filename: String, path: String, size: Number }],
+    attachments: [
+  {
+    filename: String, path: String, size: Number,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }
+],
     completedAt: Date,
     deletedAt: { type: Date, default: null }   
   },
