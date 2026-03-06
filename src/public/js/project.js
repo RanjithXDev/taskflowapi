@@ -22,15 +22,25 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", (e) => {
 
       const editBtn = e.target.closest(".edit-btn");
-      const deleteBtn = e.target.closest(".delete-btn");
+const deleteBtn = e.target.closest(".delete-btn");
+const reportBtn = e.target.closest(".report-btn");
+const csvBtn = e.target.closest(".csv-btn");
 
-      if (editBtn) {
-        editProject(editBtn.dataset.id);
-      }
+if (editBtn) {
+  editProject(editBtn.dataset.id);
+}
 
-      if (deleteBtn) {
-        deleteProject(deleteBtn.dataset.id);
-      }
+if (deleteBtn) {
+  deleteProject(deleteBtn.dataset.id);
+}
+
+if (reportBtn) {
+  downloadReport(reportBtn.dataset.id);
+}
+
+if (csvBtn) {
+  exportCSV(csvBtn.dataset.id);
+}
 
     });
 
@@ -126,6 +136,15 @@ async function fetchProjects() {
             class="delete-btn" 
             data-id="${project._id}">
             Delete
+          </button>
+          <button class="report-btn" 
+          data-id="${project._id}">
+          Download Report
+          </button>
+
+          <button class="csv-btn" 
+          data-id="${project._id}">
+          Export CSV
           </button>
 
         </div>
@@ -261,6 +280,55 @@ async function editProject(projectId) {
     console.error("Error editing project:", err);
 
   }
+
+}
+async function downloadReport(projectId) {
+
+  fetch(`/api/projects/${projectId}/report`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+  .then(response => response.blob())
+  .then(blob => {
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `project-${projectId}-report.pdf`;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+  });
+
+}
+
+async function exportCSV(projectId) {
+
+  fetch(`/api/projects/${projectId}/export?format=csv`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+  .then(response => response.blob())
+  .then(blob => {
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `project-${projectId}-tasks.csv`;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+  });
 
 }
 
