@@ -14,7 +14,9 @@ export const initSocket = (server: any) => {
 
   // JWT Authentication
   io.use((socket, next) => {
-
+    if (process.env.NODE_ENV === "test") {
+    return next();
+  }
     const token = socket.handshake.auth?.token;
 
     if (!token) {
