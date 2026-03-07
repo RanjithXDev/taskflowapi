@@ -7,6 +7,22 @@ if (!token) {
   window.location.href = "/login";
 }
 
+// Function to decode JWT and get current user ID
+function getCurrentUserId() {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    const payload = JSON.parse(jsonPayload);
+    return payload.userId || payload.id || payload._id;
+  } catch (err) {
+    console.error("Error decoding token:", err);
+    return null;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
   loadUsers();
@@ -117,6 +133,7 @@ async function fetchTasks(page = 1) {
     const tasks = result.data || result;
 
     const container = document.getElementById("tasks");
+    const currentUserId = getCurrentUserId();
 
     container.innerHTML = "";
 
@@ -125,13 +142,27 @@ async function fetchTasks(page = 1) {
       const attachmentsHtml = (task.attachments || [])
         .map(att => `
           <div class="attachment">
-            📎 
+            📎
             <a href="/api/tasks/${task._id}/attachments/${att._id}" target="_blank">
               ${att.filename}
             </a>
           </div>
         `)
         .join("");
+
+      // Check if current user is the task creator
+      const isCreator = task.createdBy?._id === currentUserId || task.createdBy?.id === currentUserId || task.createdBy === currentUserId;
+
+      // Build action buttons only if user is creator
+      const actionButtons = isCreator ? `
+        <button class="edit-btn" data-id="${task._id}">
+          Edit
+        </button>
+
+        <button class="delete-btn" data-id="${task._id}">
+          Delete
+        </button>
+      ` : `<p style="color: #999; font-size: 0.9rem;">You can only edit/delete your own tasks</p>`;
 
       container.innerHTML += `
 
@@ -158,13 +189,7 @@ async function fetchTasks(page = 1) {
 
           <div style="margin-top:10px">
 
-            <button class="edit-btn" data-id="${task._id}">
-              Edit
-            </button>
-
-            <button class="delete-btn" data-id="${task._id}">
-              Delete
-            </button>
+            ${actionButtons}
 
           </div>
 

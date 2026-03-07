@@ -1,54 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TaskFlow Dashboard</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 
-  <h1>TaskFlow Dashboard</h1>
-  <p></p>
+  <main class="container">
+    <header>
+      <h1>TaskFlow Dashboard</h1>
+      <p>Manage your projects, tasks, users, and activities in one place</p>
+    </header>
 
-  <div class="nav">
-    <a href="/users-ui">Users</a>
-    <a href="/projects-ui">Projects</a>
-    <a href="/tasks-ui">Tasks</a>
-    <a href="/comments-ui">Comments</a>
+    <nav class="nav">
+      <a href="/users-ui">Users</a>
+      <a href="/projects-ui">Projects</a>
+      <a href="/tasks-ui">Tasks</a>
+      <a href="/comments-ui">Comments</a>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </nav>
 
-     <button id="logoutBtn" class="logout-btn">
-      Logout
-    </button>
-  </div>
+    <div class="card-container">
+      <div class="card">
+        <h3>Users</h3>
+        <p>Manage system users, permissions, and account settings across your organization</p>
+        <a href="/users-ui">View Users</a>
+      </div>
 
-  <div class="card-container">
-    <div class="card">
-      <h3>Users</h3>
-      <p>Manage system users</p>
-      <a href="/users-ui">Go</a>
+      <div class="card">
+        <h3>Projects</h3>
+        <p>Create, organize, and monitor your projects with detailed tracking and insights</p>
+        <a href="/projects-ui">View Projects</a>
+      </div>
+
+      <div class="card">
+        <h3>Tasks</h3>
+        <p>Track and organize project tasks with status, priority, and deadline management</p>
+        <a href="/tasks-ui">View Tasks</a>
+      </div>
+
+      <div class="card">
+        <h3>Comments</h3>
+        <p>Collaborate effectively through task discussions and team communication</p>
+        <a href="/comments-ui">View Comments</a>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Projects</h3>
-      <p>Create & manage projects</p>
-      <a href="/projects-ui">Go</a>
-    </div>
+    <footer class="footer">
+      <p>TaskFlow © 2025 - Project management made simple, efficient, and collaborative</p>
+    </footer>
+  </main>
 
-    <div class="card">
-      <h3>Tasks</h3>
-      <p>Track project tasks</p>
-      <a href="/tasks-ui">Go</a>
-    </div>
-
-    <div class="card">
-      <h3>Comments</h3>
-      <p>Task discussions</p>
-      <a href="/comments-ui">Go</a>
-
-    </div>
-  </div>
-
+  <script src="/js/animations.js"></script>
   <script src="/js/dashboard.js"></script>
-
 
 </body>
 </html>

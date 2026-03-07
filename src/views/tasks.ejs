@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Task Management</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management - TaskFlow</title>
   <link rel="stylesheet" href="/css/tasks.css">
 </head>
 
@@ -10,32 +12,35 @@
 <div class="container">
 
   <header class="page-header">
-    <h1>Task Management</h1>
-    <a href="/dashboard" class="back-btn">← Dashboard</a>
+    <div>
+      <h1>Task Management</h1>
+      <p>Create, organize, track, and collaborate on your project tasks efficiently</p>
+    </div>
+    <a href="/dashboard" class="back-btn">Back to Dashboard</a>
   </header>
 
 
-  <!-- CREATE TASK -->
-  <div class="card">
+  <!-- CREATE TASK FORM -->
+  <section class="card">
 
-    <h2>Create Task</h2>
+    <h2>Create New Task</h2>
 
-    <div class="form-grid">
+    <form class="form-grid" onsubmit="return false;">
 
       <div class="form-group full">
-        <label>Title</label>
-        <input id="title" type="text" placeholder="Enter task title">
+        <label for="title">Task Title</label>
+        <input id="title" type="text" placeholder="Enter a clear and descriptive title" required>
       </div>
 
       <div class="form-group full">
-        <label>Description</label>
-        <textarea id="description" placeholder="Enter task description"></textarea>
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="Provide detailed task description" required></textarea>
       </div>
 
       <div class="form-group">
-        <label>Status</label>
-        <select id="status">
-          <option value="todo">Todo</option>
+        <label for="status">Status</label>
+        <select id="status" required>
+          <option value="todo">To Do</option>
           <option value="in-progress">In Progress</option>
           <option value="review">Review</option>
           <option value="done">Done</option>
@@ -43,8 +48,8 @@
       </div>
 
       <div class="form-group">
-        <label>Priority</label>
-        <select id="priority">
+        <label for="priority">Priority</label>
+        <select id="priority" required>
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
@@ -53,27 +58,27 @@
       </div>
 
       <div class="form-group">
-        <label>Assignee</label>
-        <select id="assignee"></select>
+        <label for="assignee">Assign To</label>
+        <select id="assignee" required></select>
       </div>
 
       <div class="form-group">
-        <label>Project</label>
-        <select id="project"></select>
+        <label for="project">Project</label>
+        <select id="project" required></select>
       </div>
 
       <div class="form-group">
-        <label>Tags</label>
-        <input id="tags" placeholder="comma separated">
+        <label for="tags">Tags</label>
+        <input id="tags" placeholder="Enter tags (comma separated)">
       </div>
 
       <div class="form-group">
-        <label>Due Date</label>
+        <label for="dueDate">Due Date</label>
         <input id="dueDate" type="date">
       </div>
 
       <div class="form-group full">
-        <label>Attachment (Max: 5MB)</label>
+        <label for="attachment">Attachment (Max: 5MB)</label>
         <input type="file" id="attachment">
       </div>
 
@@ -83,70 +88,27 @@
         </button>
       </div>
 
-    </div>
+    </form>
 
-  </div>
+  </section>
 
 
-  <!-- TASK LIST -->
-  <div class="card">
+  <!-- TASKS LIST -->
+  <section class="card">
 
     <h2>All Tasks</h2>
 
     <div id="tasks" class="task-grid">
-
-      <!-- tasks.js will dynamically render tasks here -->
-
-      <!-- Example structure -->
-
-      <!--
-      <div class="task-card">
-
-        <h3>Task Title</h3>
-
-        <p>Description</p>
-
-        <p><strong>Status:</strong> todo</p>
-        <p><strong>Priority:</strong> high</p>
-        <p><strong>Assignee:</strong> Ranjith</p>
-        <p><strong>Project:</strong> TaskFlow</p>
-
-        <div class="attachments">
-
-          <strong>Attachments:</strong>
-
-          <div class="attachment-item">
-            📎 report.pdf
-            <a href="/api/tasks/TASK_ID/attachments/ATTACHMENT_ID" target="_blank">
-              Download
-            </a>
-          </div>
-
-        </div>
-
-        <div class="task-actions">
-
-          <button class="edit-btn" data-id="TASK_ID">
-            Edit
-          </button>
-
-          <button class="delete-btn" data-id="TASK_ID">
-            Delete
-          </button>
-
-        </div>
-
-      </div>
-      -->
-
+      <!-- Tasks will be populated here by JavaScript -->
     </div>
 
-  </div>
+  </section>
 
 </div>
 
 
+<script src="/js/animations.js"></script>
 <script src="/js/tasks.js"></script>
-
+<script src="/socket.io/socket.io.js"></script>
 </body>
 </html>

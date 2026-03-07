@@ -4,6 +4,22 @@ const token = localStorage.getItem("token");
 if (!token) {
   window.location.href = "/login";
 }
+
+// Function to decode JWT and get current user ID
+function getCurrentUserId() {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    const payload = JSON.parse(jsonPayload);
+    return payload.userId || payload.id || payload._id;
+  } catch (err) {
+    console.error("Error decoding token:", err);
+    return null;
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   loadUsers();
   loadTasks();
@@ -105,10 +121,22 @@ async function loadComments(taskId) {
     const comments = await res.json();
 
     const container = document.getElementById('comments');
+    const currentUserId = getCurrentUserId();
+
     container.innerHTML = '';
 
     comments.forEach(comment => {
       const isReply = comment.parent ? 'comment-reply' : '';
+
+      // Check if current user is the comment author
+      const isAuthor = comment.author?._id === currentUserId || comment.author?.id === currentUserId || comment.author === currentUserId;
+
+      // Build delete button only if user is author
+      const deleteButton = isAuthor ? `
+        <button class="delete-comment-btn" data-id="${comment._id}">
+          Delete
+        </button>
+      ` : '';
 
       container.innerHTML += `
         <div class="comment-card ${isReply}">
@@ -125,9 +153,7 @@ async function loadComments(taskId) {
             ${comment.content}
           </div>
 
-          <button class="delete-comment-btn" data-id="${comment._id}">
-            Delete
-          </button>
+          ${deleteButton}
         </div>
       `;
     });
