@@ -1,8 +1,3 @@
-// Smooth Animation Utilities for Enhanced UX
-
-/**
- * Add smooth fade-in animation to elements
- */
 function fadeIn(element, duration = 400) {
   element.style.opacity = '0';
   element.style.transition = `opacity ${duration}ms ease-in`;
@@ -14,9 +9,7 @@ function fadeIn(element, duration = 400) {
   return new Promise(resolve => setTimeout(resolve, duration));
 }
 
-/**
- * Add smooth slide-in animation
- */
+
 function slideIn(element, duration = 400, direction = 'up') {
   const offsets = {
     'up': { from: 20, to: 0 },
@@ -44,9 +37,7 @@ function slideIn(element, duration = 400, direction = 'up') {
   return new Promise(resolve => setTimeout(resolve, duration));
 }
 
-/**
- * Add scale animation for clickable elements
- */
+
 function addClickAnimation(element) {
   element.addEventListener('mousedown', function() {
     this.style.transform = 'scale(0.95)';
@@ -62,9 +53,7 @@ function addClickAnimation(element) {
   });
 }
 
-/**
- * Add hover lift effect
- */
+
 function addHoverLift(element) {
   element.addEventListener('mouseenter', function() {
     this.style.transform = 'translateY(-2px)';
@@ -77,9 +66,7 @@ function addHoverLift(element) {
   });
 }
 
-/**
- * Shake animation for errors
- */
+
 function shake(element, duration = 400) {
   const keyframes = [
     { transform: 'translateX(0)' },
@@ -95,9 +82,7 @@ function shake(element, duration = 400) {
   });
 }
 
-/**
- * Pulse animation for loading states
- */
+
 function pulse(element) {
   const keyframes = [
     { opacity: 0.6 },
@@ -112,9 +97,7 @@ function pulse(element) {
   });
 }
 
-/**
- * Rotate animation for loading spinners
- */
+
 function createLoadingSpinner(message = 'Loading...') {
   const spinner = document.createElement('div');
   spinner.className = 'loading-spinner';
@@ -147,9 +130,7 @@ function createLoadingSpinner(message = 'Loading...') {
   return spinner;
 }
 
-/**
- * Show toast notification
- */
+
 function showToast(message, type = 'info', duration = 3000) {
   const toast = document.createElement('div');
   const colors = {
@@ -189,9 +170,7 @@ function showToast(message, type = 'info', duration = 3000) {
   return toast;
 }
 
-/**
- * Confirm dialog
- */
+
 function showConfirmDialog(message, onConfirm, onCancel) {
   const overlay = document.createElement('div');
   overlay.style.cssText = `
@@ -263,9 +242,7 @@ function showConfirmDialog(message, onConfirm, onCancel) {
   });
 }
 
-/**
- * Smooth scroll to element
- */
+
 function smoothScroll(element) {
   element.scrollIntoView({
     behavior: 'smooth',
@@ -273,9 +250,7 @@ function smoothScroll(element) {
   });
 }
 
-/**
- * Add loading state to button
- */
+
 function setButtonLoading(button, isLoading = true) {
   if (isLoading) {
     button.disabled = true;
@@ -289,9 +264,7 @@ function setButtonLoading(button, isLoading = true) {
   }
 }
 
-/**
- * Add CSS animations to document
- */
+
 function initializeAnimations() {
   if (!document.getElementById('animation-styles')) {
     const style = document.createElement('style');
@@ -354,7 +327,6 @@ function initializeAnimations() {
   }
 }
 
-// Initialize animations when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeAnimations);
 } else {

@@ -128,8 +128,25 @@ async function loadComments(taskId) {
     comments.forEach(comment => {
       const isReply = comment.parent ? 'comment-reply' : '';
 
-      // Check if current user is the comment author
-      const isAuthor = comment.author?._id === currentUserId || comment.author?.id === currentUserId || comment.author === currentUserId;
+      // Check if current user is the comment author - try multiple field names
+      const isAuthor =
+        comment.author?._id === currentUserId ||
+        comment.author?.id === currentUserId ||
+        comment.author === currentUserId ||
+        comment.createdBy?._id === currentUserId ||
+        comment.createdBy?.id === currentUserId ||
+        comment.createdBy === currentUserId ||
+        comment.owner?._id === currentUserId ||
+        comment.owner?.id === currentUserId ||
+        comment.owner === currentUserId ||
+        comment.userId === currentUserId;
+
+      console.log("Current User ID:", currentUserId);
+      console.log("Comment author:", comment.author);
+      console.log("Comment createdBy:", comment.createdBy);
+      console.log("Comment owner:", comment.owner);
+      console.log("Comment userId:", comment.userId);
+      console.log("Is Author:", isAuthor, "Comment ID:", comment._id);
 
       // Build delete button only if user is author
       const deleteButton = isAuthor ? `

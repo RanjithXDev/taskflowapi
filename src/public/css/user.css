@@ -209,7 +209,7 @@ select:hover {
 .user-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  gap: 28px;
 }
 
 .user-card {
@@ -219,10 +219,11 @@ select:hover {
   border-radius: 10px;
   background: white;
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: var(--transition);
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .user-card::before {
@@ -233,11 +234,12 @@ select:hover {
   width: 4px;
   height: 100%;
   background: var(--primary-color);
+  z-index: 0;
 }
 
 .user-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
   border-color: var(--primary-color);
 }
 

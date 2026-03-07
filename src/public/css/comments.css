@@ -216,7 +216,7 @@ button:active {
 #comments {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
 .comment-card {
@@ -226,13 +226,14 @@ button:active {
   border: 1px solid var(--border-color);
   border-left: 4px solid var(--primary-color);
   position: relative;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: var(--transition);
+  z-index: 1;
 }
 
 .comment-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateX(2px);
 }
 
 .comment-header {

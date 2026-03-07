@@ -175,8 +175,6 @@ async function fetchProjects() {
 
         </div>
 
-        <hr/>
-
       `;
 
     });

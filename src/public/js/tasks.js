@@ -150,10 +150,16 @@ async function fetchTasks(page = 1) {
         `)
         .join("");
 
-      // Check if current user is the task creator
-      const isCreator = task.createdBy?._id === currentUserId || task.createdBy?.id === currentUserId || task.createdBy === currentUserId;
 
-      // Build action buttons only if user is creator
+      const isCreator = task.createdBy?._id === currentUserId || task.createdBy?.id === currentUserId || task.createdBy === currentUserId || task.owner?._id === currentUserId || task.owner?.id === currentUserId || task.owner === currentUserId || task.creator?._id === currentUserId || task.creator?.id === currentUserId || task.creator === currentUserId || task.userId === currentUserId;
+
+      console.log("Current User ID:", currentUserId);
+      console.log("Task createdBy:", task.createdBy);
+      console.log("Task owner:", task.owner);
+      console.log("Task creator:", task.creator);
+      console.log("Task userId:", task.userId);
+      console.log("Is Creator:", isCreator, "Task ID:", task._id);
+
       const actionButtons = isCreator ? `
         <button class="edit-btn" data-id="${task._id}">
           Edit
@@ -194,8 +200,6 @@ async function fetchTasks(page = 1) {
           </div>
 
         </div>
-
-        <hr/>
 
       `;
 

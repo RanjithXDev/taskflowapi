@@ -1,23 +1,20 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
+import { Project } from "../models/projects";
 
 let io: Server;
 
 export const initSocket = (server: any) => {
 
   io = new Server(server, {
-    cors: {
-      origin: "*"
-    }
+    cors: { origin: "*" }
   });
 
   io.use((socket, next) => {
 
-    const token = socket.handshake.auth.token;
+    const token = socket.handshake.auth?.token;
 
-    if (!token) {
-      return next(new Error("Unauthorized"));
-    }
+    if (!token) return next(new Error("Unauthorized"));
 
     try {
 
@@ -38,15 +35,22 @@ export const initSocket = (server: any) => {
 
   });
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
 
-    socket.on("joinProject", (projectId: string) => {
+    const userId = socket.data.userId;
 
-      socket.join(projectId);
-
+    const projects = await Project.find({
+      members: userId
     });
 
+    projects.forEach(project => {
+      socket.join(project._id.toString());
+    });
+
+    console.log("User connected:", socket.id);
+
   });
+
 };
 
 export const getIO = () => {
@@ -54,4 +58,5 @@ export const getIO = () => {
   if (!io) throw new Error("Socket not initialized");
 
   return io;
+
 };
