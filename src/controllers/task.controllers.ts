@@ -6,7 +6,7 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
   try {
     const task = await TaskService.create(req.body);
     const io = getIO();
-    io.to(task.project.toString()).emit("task: created", task);
+    io.to(task.project.toString()).emit("task:created", task);
     res.status(201).json(task);
   } catch (error) {
     next(error);

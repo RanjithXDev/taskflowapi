@@ -6,13 +6,13 @@ const allowedTypes = [
     "application/pdf",
     "image/png",
     "image/jpeg",
-    "application/vnd.openxmlformats-officedocument.wordprocesssigml.document",
+    "application/vnd.openxmlformats-officedocument.wordprocesssingml.document",
 ];
 
 const storage = multer.diskStorage({
     destination: (req , file, cb) => {
-        cb(null, "uploads/attachments");
-    },
+    cb(null, path.join(process.cwd(), "uploads/attachments"));
+},
     filename: (req, file, cb)=>{
         const unique = Date.now() + "-" + file.originalname;
         cb(null, unique);

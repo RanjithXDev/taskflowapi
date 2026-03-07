@@ -1,20 +1,25 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
-import { Project } from "../models/projects";
+import { Project } from "../models/projects";   // adjust path if needed
 
 let io: Server;
 
 export const initSocket = (server: any) => {
 
   io = new Server(server, {
-    cors: { origin: "*" }
+    cors: {
+      origin: "*"
+    }
   });
 
+  // JWT Authentication
   io.use((socket, next) => {
 
     const token = socket.handshake.auth?.token;
 
-    if (!token) return next(new Error("Unauthorized"));
+    if (!token) {
+      return next(new Error("Unauthorized"));
+    }
 
     try {
 
@@ -35,19 +40,28 @@ export const initSocket = (server: any) => {
 
   });
 
+  // Connection
   io.on("connection", async (socket) => {
 
     const userId = socket.data.userId;
 
-    const projects = await Project.find({
-      members: userId
-    });
+    try {
 
-    projects.forEach(project => {
-      socket.join(project._id.toString());
-    });
+      // Find projects where user is a member
+      const projects = await Project.find({
+        members: userId
+      });
 
-    console.log("User connected:", socket.id);
+      // Auto join all project rooms
+      projects.forEach(project => {
+        socket.join(project._id.toString());
+      });
+
+      console.log(`User ${userId} joined ${projects.length} project rooms`);
+
+    } catch (err) {
+      console.error("Socket room join error:", err);
+    }
 
   });
 

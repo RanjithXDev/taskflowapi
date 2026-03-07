@@ -7,22 +7,6 @@ if (!token) {
   window.location.href = "/login";
 }
 
-// Function to decode JWT and get current user ID
-function getCurrentUserId() {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    const payload = JSON.parse(jsonPayload);
-    return payload.userId || payload.id || payload._id;
-  } catch (err) {
-    console.error("Error decoding token:", err);
-    return null;
-  }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
 
   loadUsers();
@@ -133,7 +117,6 @@ async function fetchTasks(page = 1) {
     const tasks = result.data || result;
 
     const container = document.getElementById("tasks");
-    const currentUserId = getCurrentUserId();
 
     container.innerHTML = "";
 
@@ -142,33 +125,13 @@ async function fetchTasks(page = 1) {
       const attachmentsHtml = (task.attachments || [])
         .map(att => `
           <div class="attachment">
-            📎
+            📎 
             <a href="/api/tasks/${task._id}/attachments/${att._id}" target="_blank">
               ${att.filename}
             </a>
           </div>
         `)
         .join("");
-
-
-      const isCreator = task.createdBy?._id === currentUserId || task.createdBy?.id === currentUserId || task.createdBy === currentUserId || task.owner?._id === currentUserId || task.owner?.id === currentUserId || task.owner === currentUserId || task.creator?._id === currentUserId || task.creator?.id === currentUserId || task.creator === currentUserId || task.userId === currentUserId;
-
-      console.log("Current User ID:", currentUserId);
-      console.log("Task createdBy:", task.createdBy);
-      console.log("Task owner:", task.owner);
-      console.log("Task creator:", task.creator);
-      console.log("Task userId:", task.userId);
-      console.log("Is Creator:", isCreator, "Task ID:", task._id);
-
-      const actionButtons = isCreator ? `
-        <button class="edit-btn" data-id="${task._id}">
-          Edit
-        </button>
-
-        <button class="delete-btn" data-id="${task._id}">
-          Delete
-        </button>
-      ` : `<p style="color: #999; font-size: 0.9rem;">You can only edit/delete your own tasks</p>`;
 
       container.innerHTML += `
 
@@ -195,11 +158,19 @@ async function fetchTasks(page = 1) {
 
           <div style="margin-top:10px">
 
-            ${actionButtons}
+            <button class="edit-btn" data-id="${task._id}">
+              Edit
+            </button>
+
+            <button class="delete-btn" data-id="${task._id}">
+              Delete
+            </button>
 
           </div>
 
         </div>
+
+        <hr/>
 
       `;
 
@@ -221,12 +192,38 @@ async function handleSubmit() {
 
   try {
 
-    const title = document.getElementById("title").value;
-    const description = document.getElementById("description").value;
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
     const status = document.getElementById("status").value;
     const priority = document.getElementById("priority").value;
     const assignee = document.getElementById("assignee").value;
     const project = document.getElementById("project").value;
+
+    // Validation
+    if (!title) {
+      alert("Title is required");
+      return;
+    }
+
+    if (!description) {
+      alert("Description is required");
+      return;
+    }
+
+    if (!priority) {
+      alert("Priority is required");
+      return;
+    }
+
+    if (!assignee) {
+      alert("Assignee is required");
+      return;
+    }
+
+    if (!project) {
+      alert("Project is required");
+      return;
+    }
 
     const tags = document
       .getElementById("tags")
@@ -281,27 +278,37 @@ async function handleSubmit() {
 
     // upload attachment
     const fileInput = document.getElementById("attachment");
-    const file = fileInput.files[0];
+    const file = fileInput?.files?.[0];
 
-    if (file && !editingTaskId) {
+    if (file && !editingTaskId && createdTask?._id) {
 
       const formData = new FormData();
       formData.append("file", file);
 
-      await fetch(`/api/tasks/${createdTask._id}/attachments`, {
+      try {
+        const attachRes = await fetch(`/api/tasks/${createdTask._id}/attachments`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
 
-        method: "POST",
-
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-
-        body: formData
-
-      });
+        if (!attachRes.ok) {
+          const attachError = await attachRes.json();
+          console.error("Attachment upload error:", attachError);
+          alert("Warning: Attachment upload failed - " + (attachError.message || "Unknown error"));
+        } else {
+          console.log("Attachment uploaded successfully");
+        }
+      } catch (attachmentErr) {
+        console.error("Attachment upload error:", attachmentErr);
+        alert("Warning: Could not upload attachment - " + attachmentErr.message);
+      }
 
     }
 
+    alert(editingTaskId ? "Task updated successfully!" : "Task created successfully!");
     editingTaskId = null;
 
     document.getElementById("createTaskBtn")
@@ -314,6 +321,7 @@ async function handleSubmit() {
   } catch (err) {
 
     console.error("Error submitting task:", err);
+    alert("Error: " + err.message);
 
   }
 
@@ -430,6 +438,10 @@ function clearForm() {
 
   document.getElementById("title").value = "";
   document.getElementById("description").value = "";
+  document.getElementById("status").value = "todo";
+  document.getElementById("priority").value = "";
+  document.getElementById("assignee").value = "";
+  document.getElementById("project").value = "";
   document.getElementById("tags").value = "";
   document.getElementById("dueDate").value = "";
   document.getElementById("attachment").value = "";
