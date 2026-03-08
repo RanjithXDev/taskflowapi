@@ -7,7 +7,33 @@ import { uploadAttachment } from '../config/multer';
 import {uploadTaskAttachment , downloadTaskAttachment} from '../controllers/task.controllers';
 
 const router = Router();
-
+/**
+ * @swagger
+ * /api/tasks:
+ *   post:
+ *     summary: Create a new task
+ *     tags: [Tasks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               priority:
+ *                 type: string
+ *               assignee:
+ *                 type: string
+ *               project:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Task created successfully
+ */
 router.post('/',createTaskValidator, validateRequest, createTask);
 router.get('/', getTasks);
 router.get('/:id', getTaskById);

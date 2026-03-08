@@ -8,7 +8,29 @@ import { authLimiter } from "../config/rateLimiter";
 import { avatarUpload } from "../config/avatarUpload";
 import { uploadAvatar, verifyEmail } from "../controllers/auth.controller";
 const router = Router();
-
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       401:
+ *         description: Invalid credentials
+ */
 router.post("/signup",avatarUpload.single("avatar"), authLimiter, signupValidator, validateRequest, signup);
 
 router.post("/login", authLimiter, loginValidator, validateRequest, login);
