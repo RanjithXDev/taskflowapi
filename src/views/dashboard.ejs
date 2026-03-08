@@ -5,71 +5,248 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TaskFlow Dashboard</title>
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
 
-  <main class="container">
-    <header>
-      <h1>TaskFlow Dashboard</h1>
-      <p>Manage your projects, tasks, users, and activities in one place</p>
+  <!-- TOP NAVIGATION BAR -->
+  <nav class="dashboard-navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <span class="logo-text">TaskFlow</span>
+      </div>
       
-      <button id="logoutBtn" class="logout-btn"> Logout</button>
-    </header>
-
-
-    <div class="card-container">
-      <!-- Users Card -->
-      <div class="card card-users">
-        <div class="card-content">
-          <h3>Users</h3>
-          <p>Manage system users, permissions, and account settings across your organization</p>
-          <div class="card-meta">
-            <span class="badge">Team Management</span>
-          </div>
-        </div>
-        <a href="/users-ui" class="card-btn">View Users</a>
+      <div class="navbar-menu">
+        <a href="/dashboard" class="nav-link active">Dashboard</a>
+        <a href="/api/health" class="nav-link" target="_blank">
+          Health Check
+        </a>
+        <a href="/api-docs" class="nav-link" target="_blank">
+          API Docs
+        </a>
       </div>
 
-      <!-- Projects Card -->
-      <div class="card card-projects">
-        <div class="card-content">
-          <h3>Projects</h3>
-          <p>Create, organize, and monitor your projects with detailed tracking and insights</p>
-          <div class="card-meta">
-            <span class="badge">Project Tracking</span>
-          </div>
-        </div>
-        <a href="/projects-ui" class="card-btn">View Projects</a>
-      </div>
-
-      <!-- Tasks Card -->
-      <div class="card card-tasks">
-        <div class="card-content">
-          <h3>Tasks</h3>
-          <p>Track and organize project tasks with status, priority, and deadline management</p>
-          <div class="card-meta">
-            <span class="badge">Task Management</span>
-          </div>
-        </div>
-        <a href="/tasks-ui" class="card-btn">View Tasks</a>
-      </div>
-
-      <!-- Comments Card -->
-      <div class="card card-comments">
-        <div class="card-content">
-          <h3>Comments</h3>
-          <p>Collaborate effectively through task discussions and team communication</p>
-          <div class="card-meta">
-            <span class="badge">Collaboration</span>
-          </div>
-        </div>
-        <a href="/comments-ui" class="card-btn">View Comments</a>
+      <div class="navbar-auth">
+        <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
     </div>
+  </nav>
 
-    <footer class="footer">
-      <p>TaskFlow © 2026 - Ranjith MV (G0180). </p>
+  <!-- MAIN CONTAINER -->
+  <main class="dashboard-container">
+    
+    <!-- HEADER SECTION -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1>Welcome Back</h1>
+        <p id="welcomeMsg">Your project management hub</p>
+      </div>
+      <div class="header-time">
+        <span id="currentTime"></span>
+      </div>
+    </header>
+
+    <!-- STATISTICS SECTION -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        
+        <!-- Total Projects -->
+        <div class="stat-card stat-projects">
+          <div class="stat-content">
+            <span class="stat-label">Total Projects</span>
+            <span class="stat-value" id="totalProjects">0</span>
+          </div>
+          <div class="stat-trend">Active</div>
+        </div>
+
+        <!-- Total Tasks -->
+        <div class="stat-card stat-tasks">
+          <div class="stat-content">
+            <span class="stat-label">Total Tasks</span>
+            <span class="stat-value" id="totalTasks">0</span>
+          </div>
+          <div class="stat-trend">In Progress</div>
+        </div>
+
+        <!-- Active Users -->
+        <div class="stat-card stat-users">
+          <div class="stat-content">
+            <span class="stat-label">Team Members</span>
+            <span class="stat-value" id="totalUsers">0</span>
+          </div>
+          <div class="stat-trend">Online</div>
+        </div>
+
+        <!-- Total Comments -->
+        <div class="stat-card stat-comments">
+          <div class="stat-content">
+            <span class="stat-label">Discussions</span>
+            <span class="stat-value" id="totalComments">0</span>
+          </div>
+          <div class="stat-trend">Updated</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- QUICK ACTIONS SECTION -->
+    <section class="quick-actions">
+      <h2 class="section-title">Quick Actions</h2>
+      <div class="actions-grid">
+        
+        <div class="action-card">
+          <h3>Create Project</h3>
+          <p>Start a new project</p>
+          <a href="/projects-ui" class="action-btn">Go</a>
+        </div>
+
+        <div class="action-card">
+          <h3>Create Task</h3>
+          <p>Add a new task</p>
+          <a href="/tasks-ui" class="action-btn">Go</a>
+        </div>
+
+        <div class="action-card">
+          <h3>Manage Team</h3>
+          <p>Add team members</p>
+          <a href="/users-ui" class="action-btn">Go</a>
+        </div>
+
+        <div class="action-card">
+          <h3>View Comments</h3>
+          <p>Check discussions</p>
+          <a href="/comments-ui" class="action-btn">Go</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MAIN CARDS SECTION -->
+    <section class="features-section">
+      <h2 class="section-title">Manage Everything</h2>
+      
+      <div class="card-container">
+        
+        <!-- Users Card -->
+        <div class="feature-card card-users">
+          <div class="card-header">
+            <span class="card-badge">Team</span>
+          </div>
+          <div class="card-body">
+            <h3>Users & Team</h3>
+            <p>Manage system users, permissions, and account settings across your organization</p>
+            <div class="card-meta">
+              <span class="badge">Team Management</span>
+              <span class="badge-count" id="badge-users">0 members</span>
+            </div>
+          </div>
+          <a href="/users-ui" class="card-btn">
+            Manage Users
+          </a>
+        </div>
+
+        <!-- Projects Card -->
+        <div class="feature-card card-projects">
+          <div class="card-header">
+            <span class="card-badge">Work</span>
+          </div>
+          <div class="card-body">
+            <h3>Projects</h3>
+            <p>Create, organize, and monitor your projects with detailed tracking and insights</p>
+            <div class="card-meta">
+              <span class="badge">Project Tracking</span>
+              <span class="badge-count" id="badge-projects">0 projects</span>
+            </div>
+          </div>
+          <a href="/projects-ui" class="card-btn">
+            View Projects
+          </a>
+        </div>
+
+        <!-- Tasks Card -->
+        <div class="feature-card card-tasks">
+          <div class="card-header">
+            <span class="card-badge">Track</span>
+          </div>
+          <div class="card-body">
+            <h3>Tasks</h3>
+            <p>Track and organize project tasks with status, priority, and deadline management</p>
+            <div class="card-meta">
+              <span class="badge">Task Management</span>
+              <span class="badge-count" id="badge-tasks">0 tasks</span>
+            </div>
+          </div>
+          <a href="/tasks-ui" class="card-btn">
+            View Tasks
+          </a>
+        </div>
+
+        <!-- Comments Card -->
+        <div class="feature-card card-comments">
+          <div class="card-header">
+            <span class="card-badge">Collab</span>
+          </div>
+          <div class="card-body">
+            <h3>Comments & Collaboration</h3>
+            <p>Collaborate effectively through task discussions and team communication</p>
+            <div class="card-meta">
+              <span class="badge">Collaboration</span>
+              <span class="badge-count" id="badge-comments">0 discussions</span>
+            </div>
+          </div>
+          <a href="/comments-ui" class="card-btn">
+            View Comments
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- INFO SECTION -->
+    <section class="info-section">
+      <div class="info-card info-primary">
+        <div class="info-content">
+          <h3>Get Started</h3>
+          <p>Start by creating your first project or inviting team members to collaborate</p>
+        </div>
+      </div>
+
+      <div class="info-card info-secondary">
+        <div class="info-content">
+          <h3>API Documentation</h3>
+          <p>View comprehensive API docs and integrate with external systems</p>
+          <a href="/api-docs" target="_blank" class="info-link">View API Docs</a>
+        </div>
+      </div>
+
+      <div class="info-card info-tertiary">
+        <div class="info-content">
+          <h3>System Health</h3>
+          <p>Monitor system health and performance metrics in real-time</p>
+          <a href="/api/health" target="_blank" class="info-link">Check Health</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="dashboard-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <a href="/api-docs">API Docs</a>
+          <a href="/api/health">Health Check</a>
+          <a href="/dashboard">Dashboard</a>
+        </div>
+        <div class="footer-section">
+          <h4>About</h4>
+          <p>TaskFlow - Professional project management system</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 TaskFlow. All rights reserved.</p>
+      </div>
     </footer>
+
   </main>
 
   <script src="/js/animations.js"></script>
