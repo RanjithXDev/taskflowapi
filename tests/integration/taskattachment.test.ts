@@ -1,3 +1,7 @@
+jest.mock('uuid', () => ({
+  v4: () => 'test-uuid-1234-5678'
+}));
+
 import request from "supertest";
 import path from "path";
 import fs from "fs";
