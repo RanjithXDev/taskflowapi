@@ -148,7 +148,7 @@ Create a `.env` file in the root folder.
 ```
 PORT=5000
 
-MONGO_URI=mongodb://localhost:27017/taskdb
+MONGO_URI=Your_mongodb_uri
 
 JWT_SECRET=your_secret_key
 
