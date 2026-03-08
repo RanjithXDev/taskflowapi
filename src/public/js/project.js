@@ -6,6 +6,22 @@ if (!token) {
   window.location.href = "/login";
 }
 
+// Function to decode JWT and get current user ID
+function getCurrentUserId() {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    const payload = JSON.parse(jsonPayload);
+    return payload.userId || payload.id || payload._id;
+  } catch (err) {
+    console.error("Error decoding token:", err);
+    return null;
+  }
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -103,10 +119,29 @@ async function fetchProjects() {
     const projects = await res.json();
 
     const container = document.getElementById("projects");
+    const currentUserId = getCurrentUserId();
 
     container.innerHTML = "";
 
     projects.forEach(project => {
+
+      // Check if current user is the project owner
+      const isOwner = project.owner?._id === currentUserId || project.owner?.id === currentUserId || project.owner === currentUserId;
+
+      // Build edit/delete buttons only if user is owner
+      const actionButtons = isOwner ? `
+        <button
+          class="edit-btn"
+          data-id="${project._id}">
+          Edit
+        </button>
+
+        <button
+          class="delete-btn"
+          data-id="${project._id}">
+          Delete
+        </button>
+      ` : `<p style="color: #999; font-size: 0.9rem;">You don't have permission to edit/delete this project</p>`;
 
       container.innerHTML += `
 
@@ -117,39 +152,28 @@ async function fetchProjects() {
           <p>${project.description || ""}</p>
 
           <p>
-            <strong>Owner:</strong> 
+            <strong>Owner:</strong>
             ${project.owner?.name || "Unknown"}
           </p>
 
           <p>
-            <strong>Status:</strong> 
+            <strong>Status:</strong>
             ${project.status}
           </p>
 
-          <button 
-            class="edit-btn" 
-            data-id="${project._id}">
-            Edit
-          </button>
+          ${actionButtons}
 
-          <button 
-            class="delete-btn" 
-            data-id="${project._id}">
-            Delete
-          </button>
-          <button class="report-btn" 
+          <button class="report-btn"
           data-id="${project._id}">
           Download Report
           </button>
 
-          <button class="csv-btn" 
+          <button class="csv-btn"
           data-id="${project._id}">
           Export CSV
           </button>
 
         </div>
-
-        <hr/>
 
       `;
 

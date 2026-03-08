@@ -170,8 +170,6 @@ async function fetchTasks(page = 1) {
 
         </div>
 
-        <hr/>
-
       `;
 
     });

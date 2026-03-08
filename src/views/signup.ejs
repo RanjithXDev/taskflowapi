@@ -1,46 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Signup</title>
-  <link rel="stylesheet" href="/css/user.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - TaskFlow</title>
+  <link rel="stylesheet" href="/css/auth.css">
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>Create Account</h1>
+  <div class="auth-header">
+    <h1>Create Account</h1>
+    <p>Join TaskFlow and manage your projects</p>
+  </div>
+
+  <div id="error"></div>
 
   <div class="card">
+    <form onsubmit="return false;">
 
-    <input id="name" placeholder="Full Name">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input id="name" type="text" placeholder="Enter your full name" required>
+      </div>
 
-    <input id="email" type="email" placeholder="Email">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="Enter your email" required>
+      </div>
 
-    <input id="password" type="password" placeholder="Password">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter your password (min 8 chars)" required>
+      </div>
 
-    <select id="role">
-      <option value="user">User</option>
-      <option value="admin">Admin</option>
-    </select>
-    <div class="form-group">
-    <label>Avatar Photo (optional)</label>
-    <input type="file" id="avatarFile" accept="image/png,image/jpeg">
+      <div class="form-group">
+        <label for="role">Account Type</label>
+        <select id="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="avatarFile">Profile Avatar</label>
+        <input id="avatarFile" type="file" accept="image/png, image/jpeg">
+        <span class="small-text">Optional - PNG or JPEG (Max 5MB)</span>
+      </div>
+
+      <div class="button-group">
+        <button id="signupBtn" type="button">Create Account</button>
+      </div>
+
+    </form>
+
+    <div class="auth-links">
+      <p>
+        Already have an account?
+        <a href="/login">Login</a>
+      </p>
     </div>
-
-    <button id="signupBtn">Signup</button>
-
-    <p>
-      Already have an account?
-      <a href="/login">Login</a>
-    </p>
-
-    <div id="error"></div>
-
   </div>
 
 </div>
 
+<script src="/js/animations.js"></script>
 <script src="/js/signup.js"></script>
 
 </body>

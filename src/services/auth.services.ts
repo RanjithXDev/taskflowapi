@@ -6,24 +6,33 @@ import {
 } from "../utils/jwt";
 import bcrypt from "bcryptjs";
 import { AppError} from "../utils/AppError";
+import crypto from "crypto";
 
 
 export class AuthService {
 
   static async signup(data: any) {
 
-    const user = await User.create(data);
+  const verificationToken =
+    crypto.randomBytes(32).toString("hex");
 
-    const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+  const user = await User.create({
+    ...data,
+    verificationToken,
+    verified: false
+  });
 
-    return {
-      user,
-      accessToken,
-      refreshToken
-    };
+  const accessToken = generateAccessToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
 
-  }
+  return {
+    user,
+    accessToken,
+    refreshToken,
+    verificationToken
+  };
+
+}
 
   static async login(email: string, password: string) {
 

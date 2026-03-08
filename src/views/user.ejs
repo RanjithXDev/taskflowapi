@@ -1,50 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>User Management</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - TaskFlow</title>
   <link rel="stylesheet" href="/css/user.css">
 </head>
 <body>
 
 <div class="container">
 
-  <header>
-    <h1>User Management</h1>
-    <a href="/dashboard" class="back-btn">← Dashboard</a>
+  <header class="page-header">
+    <div>
+      <h1>User Management</h1>
+      <p>Create, manage, and organize system users and their permissions</p>
+    </div>
+    <a href="/dashboard" class="back-btn">Back to Dashboard</a>
   </header>
 
   <!-- Create User Card -->
-  <div class="card form-card">
+  <section class="card form-card">
     <h2>Create New User</h2>
 
-    <div class="form-grid">
-      <input id="name" type="text" placeholder="Full Name (2–50 chars)" required>
-      <input id="email" type="email" placeholder="Email Address" required>
-      <input id="password" type="password" placeholder="Password (min 8 chars)" required>
+    <form class="form-grid" onsubmit="return false;">
 
-      <select id="role">
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
-
-       <div class="avatar-upload">
-       <input id="avatarFile" type="file" accept="image/png, image/jpeg">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input id="name" type="text" placeholder="Enter full name (2–50 chars)" required>
       </div>
-    </div>
 
-    <button id="createBtn" class="primary-btn">Create User</button>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="Enter email address" required>
+      </div>
 
-    <div id="error" class="error-msg"></div>
-  </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter password (min 8 chars)" required>
+      </div>
+
+      <div class="form-group">
+        <label for="role">User Role</label>
+        <select id="role" required>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label for="avatarFile">Profile Avatar</label>
+        <input id="avatarFile" type="file" accept="image/png, image/jpeg">
+        <small style="color: #999; margin-top: 5px;">Optional - PNG or JPEG (Max 5MB)</small>
+      </div>
+
+      <div class="form-group full">
+        <button id="createBtn" class="primary-btn">Create User</button>
+      </div>
+
+    </form>
+
+    <div id="error" class="error-msg" style="display: none;"></div>
+  </section>
 
   <!-- Users List -->
-  <div class="card">
+  <section class="card">
     <h2>All Users</h2>
     <div id="users" class="user-grid"></div>
-  </div>
+  </section>
 
 </div>
 
+<script src="/js/animations.js"></script>
 <script src="/js/user.js"></script>
 </body>
 </html>
