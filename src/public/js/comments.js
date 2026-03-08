@@ -141,12 +141,7 @@ async function loadComments(taskId) {
         comment.owner === currentUserId ||
         comment.userId === currentUserId;
 
-      console.log("Current User ID:", currentUserId);
-      console.log("Comment author:", comment.author);
-      console.log("Comment createdBy:", comment.createdBy);
-      console.log("Comment owner:", comment.owner);
-      console.log("Comment userId:", comment.userId);
-      console.log("Is Author:", isAuthor, "Comment ID:", comment._id);
+    
 
       // Build delete button only if user is author
       const deleteButton = isAuthor ? `

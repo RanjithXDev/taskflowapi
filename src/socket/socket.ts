@@ -51,12 +51,11 @@ export const initSocket = (server: any) => {
         members: userId
       });
 
-      // Auto join all project rooms
       projects.forEach(project => {
         socket.join(project._id.toString());
       });
 
-      console.log(`User ${userId} joined ${projects.length} project rooms`);
+      
 
     } catch (err) {
       console.error("Socket room join error:", err);
