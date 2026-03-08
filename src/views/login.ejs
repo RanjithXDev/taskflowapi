@@ -1,39 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
-  <link rel="stylesheet" href="/css/user.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - TaskFlow</title>
+  <link rel="stylesheet" href="/css/auth.css">
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>Login</h1>
+  <div class="auth-header">
+    <h1>Login</h1>
+    <p>Welcome back to TaskFlow</p>
+  </div>
+
+  <div id="error"></div>
 
   <div class="card">
+    <form onsubmit="return false;">
 
-    <input id="email" type="email" placeholder="Email">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="Enter your email" required>
+      </div>
 
-    <input id="password" type="password" placeholder="Password">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter your password" required>
+      </div>
 
-    <button id="loginBtn">Login</button>
+      <div class="button-group">
+        <button id="loginBtn" type="button">Login</button>
+      </div>
 
-    <p>
-      Don't have an account?
-      <a href="/signup">Signup</a>
-    </p>
-    <p>
-   <a href="/forgot-password">
-    Forgot Password?
-    </a>
-  </p>
-    <div id="error"></div>
+    </form>
 
+    <div class="auth-links">
+      <p>
+        Don't have an account?
+        <a href="/signup">Create Account</a>
+      </p>
+      <p>
+        <a href="/forgot-password">Forgot Password?</a>
+      </p>
+    </div>
   </div>
 
 </div>
 
+<script src="/js/animations.js"></script>
 <script src="/js/login.js"></script>
 
 </body>

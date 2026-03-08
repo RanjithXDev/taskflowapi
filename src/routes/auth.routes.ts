@@ -6,7 +6,7 @@ import validateRequest from "../middleware/validateRequest";
 import { isAuth } from "../middleware/isAuth";
 import { authLimiter } from "../config/rateLimiter";
 import { avatarUpload } from "../config/avatarUpload";
-import { uploadAvatar } from "../controllers/auth.controller";
+import { uploadAvatar, verifyEmail } from "../controllers/auth.controller";
 const router = Router();
 
 router.post("/signup",avatarUpload.single("avatar"), authLimiter, signupValidator, validateRequest, signup);
@@ -19,6 +19,7 @@ router.post("/refresh", refresh);
 router.post("/forgot-password", authLimiter, forgotPasswordValidator, validateRequest, forgotPassword);
 router.put("/me/avatar", isAuth,  avatarUpload.single("avatar"), uploadAvatar);
 router.post("/reset-password/:token", resetPasswordValidator, validateRequest, resetPassword);
+router.get("/verify-email/:token", verifyEmail);
 
 router.get("/me", isAuth, me);
 

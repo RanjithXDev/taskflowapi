@@ -48,11 +48,13 @@ describe("TaskService", () => {
 
     const limitMock = jest.fn().mockResolvedValue(mockTasks);
     const skipMock = jest.fn().mockReturnValue({ limit: limitMock });
-    const populateMock2 = jest.fn().mockReturnValue({ skip: skipMock });
+    const sortMock = jest.fn().mockReturnValue({ skip: skipMock });
+
+    const populateMock2 = jest.fn().mockReturnValue({ sort: sortMock });
     const populateMock1 = jest.fn().mockReturnValue({ populate: populateMock2 });
 
     mockedTask.find.mockReturnValue({
-      populate: populateMock1
+     populate: populateMock1
     } as any);
 
     mockedTask.countDocuments = jest.fn().mockResolvedValue(5) as any;

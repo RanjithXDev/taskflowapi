@@ -13,36 +13,81 @@ export class TaskService {
   }
 
   static async findAll(query: any) {
-    const { status, priority, assignee, page = 1, limit = 10 } = query;
 
-    const filter: any = { deletedAt: null };
+  const {
+    status,
+    priority,
+    assignee,
+    page = 1,
+    limit = 10,
+    cursor,
+    sortBy = "createdAt",
+    order = "asc"
+  } = query;
 
-    if (status) filter.status = status;
-    if (priority) filter.priority = priority;
-    if (assignee) filter.assignee = assignee;
+  const filter: any = { deletedAt: null };
 
-    const skip = (Number(page) - 1) * Number(limit);
+  if (status) filter.status = status;
+  if (priority) filter.priority = priority;
+  if (assignee) filter.assignee = assignee;
 
-    const [tasks, total] = await Promise.all([
-      Task.find(filter)
-        .populate('assignee', 'name email')
-        .populate('project', 'name')
-        .skip(skip)
-        .limit(Number(limit)),
-      Task.countDocuments(filter)
-    ]);
+  const sortOrder = order === "desc" ? -1 : 1;
+
+
+  if (cursor) {
+
+    filter._id = { $gt: cursor };
+
+    const tasks = await Task.find(filter)
+      .populate("assignee", "name email")
+      .populate("project", "name")
+      .sort({ _id: 1 })
+      .limit(Number(limit) + 1);
+
+    const hasMore = tasks.length > Number(limit);
+
+    if (hasMore) tasks.pop();
+
+    const nextCursor =
+      tasks.length > 0 ? tasks[tasks.length - 1]._id : null;
 
     return {
       data: tasks,
-      pagination: {
-        total,
-        page: Number(page),
-        limit: Number(limit),
-        totalPages: Math.ceil(total / Number(limit))
-      }
+      nextCursor,
+      hasMore,
+      limit: Number(limit)
     };
   }
 
+ 
+
+  const pageNum = Math.max(Number(page), 1);
+  const limitNum = Math.max(Number(limit), 1);
+
+  const skip = (pageNum - 1) * limitNum;
+
+  const [tasks, total] = await Promise.all([
+    Task.find(filter)
+      .populate("assignee", "name email")
+      .populate("project", "name")
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(limitNum),
+
+    Task.countDocuments(filter)
+  ]);
+
+  const totalPages = Math.ceil(total / limitNum);
+
+  return {
+    data: tasks,
+    total,
+    page: pageNum,
+    limit: limitNum,
+    totalPages,
+    hasMore: pageNum < totalPages
+  };
+}
   static async findById(id: string) {
     const task = await Task.findOne({ _id: id, deletedAt: null })
       .populate('assignee', 'name email')

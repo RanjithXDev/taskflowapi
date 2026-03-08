@@ -1,0 +1,31 @@
+ body{
+      font-family: Arial;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      background:#f5f5f5;
+    }
+
+    .card{
+      background:white;
+      padding:40px;
+      border-radius:10px;
+      text-align:center;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    button{
+      padding:12px 20px;
+      border:none;
+      background:#4CAF50;
+      color:white;
+      font-size:16px;
+      border-radius:6px;
+      cursor:pointer;
+      margin-top:20px;
+    }
+
+    button:hover{
+      background:#43a047;
+    }

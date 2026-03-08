@@ -67,10 +67,26 @@ async function fetchUsers() {
           </div>
 
           <div class="user-info">
-            <strong>${user?.name || "Unknown"}</strong>
-            <p>${user?.email || ""}</p>
-            <span class="role ${user.role}">${user.role}</span>
-          </div>
+  <strong>${user?.name || "Unknown"}</strong>
+  <p>${user?.email || ""}</p>
+
+  <span class="role ${user.role}">
+    ${user.role}
+  </span>
+
+  <span class="verify-status ${
+    user.verified ? "verified" : "not-verified"
+  }">
+
+    ${
+      user.verified
+        ? "✔ Verified"
+        : "⚠ Not Verified"
+    }
+
+  </span>
+
+</div>
 
           <div class="user-actions">
 
