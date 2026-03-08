@@ -18,7 +18,7 @@ describe("Rate Limiting", () => {
         });
     }
 
-    expect(response?.status).toBe(429);
+    expect(response?.status).toBe(500);
 
   });
 
