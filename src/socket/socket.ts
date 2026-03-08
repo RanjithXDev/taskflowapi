@@ -12,7 +12,6 @@ export const initSocket = (server: any) => {
     }
   });
 
-  // JWT Authentication
   io.use((socket, next) => {
     if (process.env.NODE_ENV === "test") {
     return next();
@@ -42,14 +41,12 @@ export const initSocket = (server: any) => {
 
   });
 
-  // Connection
   io.on("connection", async (socket) => {
 
     const userId = socket.data.userId;
 
     try {
 
-      // Find projects where user is a member
       const projects = await Project.find({
         members: userId
       });

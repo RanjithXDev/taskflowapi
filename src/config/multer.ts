@@ -6,7 +6,7 @@ const allowedTypes = [
     "application/pdf",
     "image/png",
     "image/jpeg",
-    "application/vnd.openxmlformats-officedocument.wordprocesssingml.document",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
 const storage = multer.diskStorage({

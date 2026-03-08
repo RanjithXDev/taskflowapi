@@ -4,6 +4,8 @@ import helmet from "helmet";
 import path from "path";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import compression from "compression";
+import morgan from "morgan";
 
 import viewRoutes from "./routes/view.routes";
 import healthRoutes from "./routes/health.routes";
@@ -17,14 +19,18 @@ import authRoutes from "./routes/auth.routes";
 import { notFound } from "./middleware/notfound";
 import { errorHandler } from "./middleware/errorhandler";
 
-const app = express();
-
 dotenv.config();
+
+const app = express();
 
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
+
+app.use(compression()); 
+app.use(morgan("dev")); 
+
 
 app.use(
   express.static(
@@ -32,23 +38,17 @@ app.use(
   )
 );
 
-
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src/views"));
 
-
 app.use("/", viewRoutes);
-
-
 app.use("/api/auth", authRoutes);
-
 
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/health", healthRoutes);
-
 
 app.use(notFound);
 app.use(errorHandler);

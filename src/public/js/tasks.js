@@ -170,8 +170,6 @@ async function fetchTasks(page = 1) {
 
         </div>
 
-        <hr/>
-
       `;
 
     });
@@ -192,38 +190,12 @@ async function handleSubmit() {
 
   try {
 
-    const title = document.getElementById("title").value.trim();
-    const description = document.getElementById("description").value.trim();
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
     const status = document.getElementById("status").value;
     const priority = document.getElementById("priority").value;
     const assignee = document.getElementById("assignee").value;
     const project = document.getElementById("project").value;
-
-    // Validation
-    if (!title) {
-      alert("Title is required");
-      return;
-    }
-
-    if (!description) {
-      alert("Description is required");
-      return;
-    }
-
-    if (!priority) {
-      alert("Priority is required");
-      return;
-    }
-
-    if (!assignee) {
-      alert("Assignee is required");
-      return;
-    }
-
-    if (!project) {
-      alert("Project is required");
-      return;
-    }
 
     const tags = document
       .getElementById("tags")
@@ -278,37 +250,27 @@ async function handleSubmit() {
 
     // upload attachment
     const fileInput = document.getElementById("attachment");
-    const file = fileInput?.files?.[0];
+    const file = fileInput.files[0];
 
-    if (file && !editingTaskId && createdTask?._id) {
+    if (file && !editingTaskId) {
 
       const formData = new FormData();
       formData.append("file", file);
 
-      try {
-        const attachRes = await fetch(`/api/tasks/${createdTask._id}/attachments`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          body: formData
-        });
+      await fetch(`/api/tasks/${createdTask._id}/attachments`, {
 
-        if (!attachRes.ok) {
-          const attachError = await attachRes.json();
-          console.error("Attachment upload error:", attachError);
-          alert("Warning: Attachment upload failed - " + (attachError.message || "Unknown error"));
-        } else {
-          console.log("Attachment uploaded successfully");
-        }
-      } catch (attachmentErr) {
-        console.error("Attachment upload error:", attachmentErr);
-        alert("Warning: Could not upload attachment - " + attachmentErr.message);
-      }
+        method: "POST",
+
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+
+        body: formData
+
+      });
 
     }
 
-    alert(editingTaskId ? "Task updated successfully!" : "Task created successfully!");
     editingTaskId = null;
 
     document.getElementById("createTaskBtn")
@@ -321,7 +283,6 @@ async function handleSubmit() {
   } catch (err) {
 
     console.error("Error submitting task:", err);
-    alert("Error: " + err.message);
 
   }
 
@@ -438,10 +399,6 @@ function clearForm() {
 
   document.getElementById("title").value = "";
   document.getElementById("description").value = "";
-  document.getElementById("status").value = "todo";
-  document.getElementById("priority").value = "";
-  document.getElementById("assignee").value = "";
-  document.getElementById("project").value = "";
   document.getElementById("tags").value = "";
   document.getElementById("dueDate").value = "";
   document.getElementById("attachment").value = "";

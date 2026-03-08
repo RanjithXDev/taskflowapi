@@ -8,11 +8,14 @@ export interface IUser extends Document {
   name: string;
   role: 'user' | 'admin';
   avatar?: string;
+  verified: boolean;
+  verificationToken?: string;
   resetToken?: string;
   resetTokenExp?: Date;
 
   comparePassword(candidate: string): Promise<boolean>;
   generateResetToken(): string;
+  generateVerificationToken(): string;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -53,6 +56,14 @@ const userSchema = new mongoose.Schema<IUser>(
     avatar: {
       type: String
     },
+    verified: {
+     type: Boolean,
+    default: false
+    },
+
+  verificationToken: {
+  type: String
+  },
 
     resetToken: {
       type: String
@@ -89,6 +100,14 @@ userSchema.methods.generateResetToken = function (): string {
 
   this.resetToken = token;
   this.resetTokenExp = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  return token;
+};
+userSchema.methods.generateVerificationToken = function (): string {
+
+  const token = crypto.randomBytes(32).toString('hex');
+
+  this.verificationToken = token;
 
   return token;
 };
