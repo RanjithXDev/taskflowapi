@@ -12,12 +12,13 @@ describe("UserService", () => {
   it("create user", async () => {
 
     const mockUser = { name: "Test User" };
+    const expectedPayload = { name: "Test User", verified: false };
 
     (User.create as jest.Mock).mockResolvedValue(mockUser);
 
     const result = await UserService.create(mockUser);
 
-    expect(User.create).toHaveBeenCalledWith(mockUser);
+    expect(User.create).toHaveBeenCalledWith(expectedPayload);
     expect(result).toEqual(mockUser);
 
   });
@@ -37,5 +38,6 @@ describe("UserService", () => {
     expect(result).toEqual(mockUsers);
 
   });
+  
 
 });

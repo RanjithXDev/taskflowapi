@@ -47,7 +47,7 @@ export const signup = async (
       <h2>Email Verification</h2>
       <p>Please click below to verify your account</p>
       <a href="${verifyLink}">Verify Email</a>
-       <p>If the button does not work, copy this link:</p>
+      <p>If the button does not work copy this link:</p>
       <p>${verifyLink}</p>
       `
     );
@@ -147,6 +147,7 @@ export const refresh = async (
 };
 
 
+
 export const verifyEmail = async (
   req: Request,
   res: Response,
@@ -185,6 +186,7 @@ export const verifyEmail = async (
 };
 
 
+
 export const forgotPassword = async (
   req: Request,
   res: Response,
@@ -208,7 +210,7 @@ export const forgotPassword = async (
     await user.save();
 
     const resetLink =
-      `${req.protocol}://${req.get("host")}/reset-password/${token}`;
+      `${req.protocol}://${req.get("host")}/reset/${token}`;
 
     await sendEmail(
       user.email,
@@ -217,6 +219,9 @@ export const forgotPassword = async (
       <h3>Password Reset</h3>
       <p>Click below to reset your password</p>
       <a href="${resetLink}">Reset Password</a>
+
+      <p>If the button doesn't work copy this link:</p>
+      <p>${resetLink}</p>
       `
     );
 
@@ -231,6 +236,7 @@ export const forgotPassword = async (
 };
 
 
+
 export const resetPassword = async (
   req: Request,
   res: Response,
@@ -239,9 +245,12 @@ export const resetPassword = async (
 
   try {
 
+    const { token } = req.params;
+    const { password } = req.body;
+
     await AuthService.resetPassword(
-      req.params.token as string,
-      req.body.password
+      token as any,
+      password
     );
 
     res.json({

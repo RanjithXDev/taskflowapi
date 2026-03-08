@@ -1,3 +1,7 @@
+jest.mock('uuid', () => ({
+  v4: () => 'test-uuid-1234-5678'
+}));
+
 import jwt from "jsonwebtoken";
 import { io } from "socket.io-client";
 import request from "supertest";

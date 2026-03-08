@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import compression from "compression";
 import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
 
 import viewRoutes from "./routes/view.routes";
 import healthRoutes from "./routes/health.routes";
@@ -18,6 +19,9 @@ import authRoutes from "./routes/auth.routes";
 
 import { notFound } from "./middleware/notfound";
 import { errorHandler } from "./middleware/errorhandler";
+import { requestLogger } from "./middleware/logger";
+import { requestIdMiddleware } from "./middleware/requestID";
+import { swaggerSpec } from "./config/swagger";
 
 dotenv.config();
 
@@ -27,10 +31,11 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
-
+app.use(requestLogger);
+app.use(requestIdMiddleware);
 app.use(compression()); 
 app.use(morgan("dev")); 
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(
   express.static(
