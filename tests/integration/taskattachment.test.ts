@@ -26,7 +26,7 @@ describe("Task Attachment Integration", () => {
         password: "password123"
       });
 
-    console.log("Signup:", signup.body);
+    
 
     token = signup.body.accessToken;
 
@@ -41,7 +41,7 @@ describe("Task Attachment Integration", () => {
         priority: "low"
       });
 
-    console.log("Task Create:", taskRes.body);
+   
 
     expect(taskRes.status).toBe(201);
 
@@ -57,7 +57,7 @@ describe("Task Attachment Integration", () => {
       .set("Authorization", `Bearer ${token}`)
       .attach("attachment", filePath);
 
-    console.log("UPLOAD RESPONSE:", res.body);
+    
     
 
     expect(res.status).toBe(201);

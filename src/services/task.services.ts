@@ -1,17 +1,46 @@
 import { Task } from '../models/Task';
-
+import {User} from "../models/User";
+import { sendEmail } from './email.services';
 export class TaskService {
 
-  static async create(data: any) {
-    if (data.dueDate && new Date(data.dueDate).getTime() < Date.now()) {
-  throw new Error("Due date must be in the future");
-}
+ static async create(data: any) {
+
+  if (data.dueDate && new Date(data.dueDate).getTime() < Date.now()) {
+    throw new Error("Due date must be in the future");
+  }
 
   const task = await Task.create(data);
 
-  return task;
+  // Send email to assigned user
+  if (task.assignee) {
+
+    const user = await User.findById(task.assignee);
+
+    if (user) {
+
+      await sendEmail(
+        user.email,
+        "New Task Assigned",
+        `
+        <h2>Task Assigned</h2>
+        <p>Hello ${user.name},</p>
+
+        <p>You have been assigned a new task.</p>
+
+        <p><strong>Task:</strong> ${task.title}</p>
+        <p><strong>Description:</strong> ${task.description}</p>
+        <p><strong>Priority:</strong> ${task.priority}</p>
+
+        <p>Please login to TaskFlow to view the task.</p>
+        `
+      );
+
+    }
+
   }
 
+  return task;
+}
   static async findAll(query: any) {
 
   const {
