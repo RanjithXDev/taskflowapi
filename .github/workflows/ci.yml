@@ -1,50 +1,40 @@
-name: Node.js CI
+name: Node CI
 
 on:
 push:
-branches: [main, develop]
+branches: [ main, develop ]
 pull_request:
-branches: [main, develop]
+branches: [ main, develop ]
 
 jobs:
-build-and-test:
-name: Build & Test (Node ${{ matrix.node-version }})
+test:
+name: Test & Build
 runs-on: ubuntu-latest
 
 ```
 strategy:
   matrix:
-    node-version: [18, 20]
-
-env:
-  NODE_ENV: test
-  JWT_SECRET: test-secret-32-chars-placeholder
-  JWT_REFRESH_SECRET: refresh-secret-32-chars-placeholder
+    node-version: [18.x, 20.x]
 
 steps:
-  - name: Checkout Repository
+  - name: Checkout repository
     uses: actions/checkout@v4
 
-  - name: Setup Node.js ${{ matrix.node-version }}
+  - name: Setup Node.js
     uses: actions/setup-node@v4
     with:
       node-version: ${{ matrix.node-version }}
       cache: npm
 
-  - name: Install Dependencies
+  - name: Install dependencies
     run: npm ci
 
-  - name: Build TypeScript
+  - name: Run tests
+    run: npm run test
+
+  - name: Generate coverage
+    run: npm run test:coverage
+
+  - name: Build project
     run: npm run build
-
-  - name: Run Tests
-    run: npm test -- --forceExit --coverage
-
-  - name: Upload Coverage
-    if: matrix.node-version == '20'
-    uses: actions/upload-artifact@v4
-    with:
-      name: coverage-report
-      path: coverage
-      retention-days: 7
 ```
