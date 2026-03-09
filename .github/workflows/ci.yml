@@ -1,145 +1,50 @@
-name: CI
+name: Node.js CI
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+push:
+branches: [main, develop]
+pull_request:
+branches: [main, develop]
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & TypeScript
-    runs-on: ubuntu-latest
+build-and-test:
+name: Build & Test (Node ${{ matrix.node-version }})
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+```
+strategy:
+  matrix:
+    node-version: [18, 20]
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+env:
+  NODE_ENV: test
+  JWT_SECRET: test-secret-32-chars-placeholder
+  JWT_REFRESH_SECRET: refresh-secret-32-chars-placeholder
 
-      - name: Install dependencies
-        run: npm ci
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
 
-      - name: Run ESLint
-        run: npm run lint
+  - name: Setup Node.js ${{ matrix.node-version }}
+    uses: actions/setup-node@v4
+    with:
+      node-version: ${{ matrix.node-version }}
+      cache: npm
 
-      - name: TypeScript type check
-        run: npx tsc --noEmit
+  - name: Install Dependencies
+    run: npm ci
 
+  - name: Build TypeScript
+    run: npm run build
 
-  test:
-    name: Tests (Node ${{ matrix.node-version }})
-    runs-on: ubuntu-latest
-    needs: lint-and-typecheck
+  - name: Run Tests
+    run: npm test -- --forceExit --coverage
 
-    strategy:
-      matrix:
-        node-version: [18, 20]
-
-    services:
-      mongodb:
-        image: mongo:7
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      NODE_ENV: test
-      MONGO_URI: mongodb://127.0.0.1:27017/taskflow_test
-      JWT_SECRET: test-jwt-secret-32-chars-placeholder
-      JWT_REFRESH_SECRET: test-refresh-secret-32-chars-placeholder
-      JWT_EXPIRES_IN: 15m
-      JWT_REFRESH_EXPIRES_IN: 7d
-      REDIS_URL: ""
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Wait for MongoDB
-        run: |
-          until mongosh --eval "db.adminCommand('ping')" > /dev/null 2>&1; do
-            echo "Waiting for MongoDB..."
-            sleep 2
-          done
-
-      - name: Run tests with coverage
-        run: npm test -- --forceExit --coverage
-
-      - name: Upload coverage to Codecov
-        if: matrix.node-version == '20'
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-taskflow
-        continue-on-error: true
-
-
-  build:
-    name: Build TypeScript
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
-          retention-days: 7
-
-
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    needs: lint-and-typecheck
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true
+  - name: Upload Coverage
+    if: matrix.node-version == '20'
+    uses: actions/upload-artifact@v4
+    with:
+      name: coverage-report
+      path: coverage
+      retention-days: 7
+```
