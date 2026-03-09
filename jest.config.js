@@ -19,7 +19,17 @@ module.exports = {
     'node_modules/(?!(uuid)/)'
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/tests/**/*.test.ts'], // Only pick up .ts test files
   collectCoverage: true,
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/**/*.d.ts',
+    '!<rootDir>/src/**/index.ts',
+    '!<rootDir>/src/server.ts',           // Entry point - not unit testable
+    '!<rootDir>/src/routes/view.routes.ts', // View render routes - integration only
+    '!<rootDir>/src/utils/email.ts',       // Console stub - trivial
+    '!<rootDir>/src/socket/socket.ts',     // Socket.IO integration - needs E2E testing
+  ],
   coverageThreshold: {
     global: {
       branches: 80,
